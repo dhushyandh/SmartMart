@@ -30,6 +30,8 @@ const Login = () => {
       });
     }
   };
+  console.log("GOOGLE ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
+
 
 
   const submitHandler = async (e) => {
