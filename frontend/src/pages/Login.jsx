@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
 
@@ -11,6 +12,25 @@ const Login = () => {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const googleSuccess = async (credentialResponse) => {
+    try {
+      const res = await axios.post(
+        backendUrl + '/api/auth/google',
+        { token: credentialResponse.credential }
+      );
+
+      if (res.data.success) {
+        setToken(res.data.token);
+        localStorage.setItem('token', res.data.token);
+      }
+    } catch (error) {
+      toast.error("Google Login Failed", {
+        position: 'bottom-right',
+        pauseOnHover: false,
+      });
+    }
+  };
+
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -73,6 +93,17 @@ const Login = () => {
         }
       </div>
       <button className='bg-black text-white font-light px-8 py-2 mt-4 cursor-pointer'>{currState === 'Login' ? 'Login' : 'Sign Up'}</button>
+      <div className="mt-4 flex-flex flex-col items-center w-[80%] gap-2 py-3 px-3">
+        <GoogleLogin
+          onSuccess={googleSuccess}
+          onError={() =>
+            toast.error("Google Login Failed", {
+              position: 'bottom-right',
+              pauseOnHover: false,
+            })
+          }
+        />
+      </div>
     </form>
   )
 }
