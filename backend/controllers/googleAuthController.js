@@ -1,9 +1,6 @@
-import { OAuth2Client } from "google-auth-library";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import axios from "axios";
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const googleAuth = async (req, res) => {
   try {
@@ -31,7 +28,7 @@ export const googleAuth = async (req, res) => {
       user = await userModel.create({
         name,
         email,
-        password: sub, // dummy password (Google handles auth)
+        password: `google-${sub}`, 
       });
     }
 

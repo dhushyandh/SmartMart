@@ -106,7 +106,7 @@ const Login = () => {
         }
       </div>
       <button className='bg-black text-white font-light px-8 py-2 mt-4 cursor-pointer'>{currState === 'Login' ? 'Login' : 'Sign Up'}</button>
-      <div className="mt-4 flex-flex flex-col items-center w-[80%] gap-2 py-3 px-3">
+      <div className="mt-4 flex flex-col items-center w-[80%] gap-2 py-3 px-3">
         <button
           type="button"
           onClick={() => googleLogin()}
