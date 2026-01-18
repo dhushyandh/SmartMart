@@ -1,6 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -12,13 +13,16 @@ export const googleAuth = async (req, res) => {
     }
 
     // Verify Google token
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    const googleUser = await axios.get(
+      `https://www.googleapis.com/oauth2/v3/userinfo`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-    const payload = ticket.getPayload();
-    const { email, name, sub } = payload;
+    const { email, name, sub } = googleUser.data;
 
     // Check if user already exists
     let user = await userModel.findOne({ email });
