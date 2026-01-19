@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 
+
 const Login = () => {
 
   const [currState, setCurrState] = useState('Login');
@@ -74,23 +75,6 @@ const Login = () => {
         }
       </div>
       <button className='bg-black text-white font-light px-8 py-2 mt-4 cursor-pointer'>{currState === 'Login' ? 'Login' : 'Sign Up'}</button>
-      <div className="mt-4">
-        <button
-          type="button"
-          onClick={() => {
-            window.location.href =
-              import.meta.env.VITE_BACKEND_URL + "/api/auth/google";
-          }}
-          className="flex items-center justify-center gap-2 border px-4 py-2 w-full"
-        >
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            className="w-5 h-5"
-          />
-          <span>Continue with Google</span>
-        </button>
-
-      </div>
     </form>
   )
 }
