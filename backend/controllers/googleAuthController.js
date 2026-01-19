@@ -1,54 +1,43 @@
+import { OAuth2Client } from "google-auth-library";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-import axios from "axios";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const googleAuth = async (req, res) => {
   try {
-    const { token } = req.body;
-    if (!token) {
-      return res.json({ success: false, message: "No token provided" });
+    const { credential } = req.body;
+    if (!credential) {
+      return res.json({ success: false, message: "No credential" });
     }
 
-    // Verify Google token
-    const googleUser = await axios.get(
-      `https://www.googleapis.com/oauth2/v3/userinfo`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
 
-    const { email, name, sub } = googleUser.data;
+    const payload = ticket.getPayload();
+    const { email, name, sub } = payload;
 
-    // Check if user already exists
     let user = await userModel.findOne({ email });
 
     if (!user) {
       user = await userModel.create({
         name,
         email,
-        password: `google-${sub}`, 
+        password: `google-${sub}`,
       });
     }
 
-    // Create JWT
-    const jwtToken = jwt.sign(
+    const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    res.json({
-      success: true,
-      token: jwtToken,
-    });
+    res.json({ success: true, token });
 
-  } catch (error) {
-    console.error(error);
-    res.json({
-      success: false,
-      message: "Google authentication failed",
-    });
+  } catch (err) {
+    res.json({ success: false, message: "Google auth failed" });
   }
 };

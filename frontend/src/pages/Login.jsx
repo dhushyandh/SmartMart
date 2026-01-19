@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from "@react-oauth/google";
+
 
 const Login = () => {
 
@@ -13,34 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        const res = await axios.post(
-          backendUrl + "/api/auth/google",
-          { token: tokenResponse.access_token }
-        );
 
-        if (res.data.success) {
-          setToken(res.data.token);
-          localStorage.setItem("token", res.data.token);
-          navigate("/");
-        }
-      } catch (err) {
-        toast.error("Google login failed", {
-          position: "bottom-right",
-          pauseOnHover: false,
-        });
-      }
-    },
-
-    onError: () => {
-      toast.error("Google login cancelled", {
-        position: "bottom-right",
-        pauseOnHover: false,
-      });
-    },
-  });
 
 
 
@@ -106,20 +80,26 @@ const Login = () => {
         }
       </div>
       <button className='bg-black text-white font-light px-8 py-2 mt-4 cursor-pointer'>{currState === 'Login' ? 'Login' : 'Sign Up'}</button>
-      <div className="mt-4 flex flex-col items-center w-[80%] gap-2 py-3 px-3">
-        <button
-          type="button"
-          onClick={() => googleLogin()}
-          className="flex items-center justify-center gap-2 border border-gray-400 px-4 py-2 w-full mt-3"
-        >
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="google"
-            className="w-5 h-5"
-          />
-          <span>Sign in with Google</span>
-        </button>
+      <div className="mt-4">
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            try {
+              const res = await axios.post(
+                backendUrl + "/api/auth/google",
+                { credential: credentialResponse.credential }
+              );
 
+              if (res.data.success) {
+                setToken(res.data.token);
+                localStorage.setItem("token", res.data.token);
+                navigate("/");
+              }
+            } catch {
+              toast.error("Google login failed");
+            }
+          }}
+          onError={() => toast.error("Google login cancelled")}
+        />
       </div>
     </form>
   )
