@@ -15,6 +15,7 @@ import Searchbar from './components/Searchbar'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import Verify from './pages/Verify'
+import GoogleSuccess from "./pages/GoogleSuccess";
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
         <Route path='place-order' element={<PlaceOrder />} />
         <Route path='orders' element={< Orders />} />
         <Route path='verify' element={< Verify />} />
+        <Route path="/google-success" element={<GoogleSuccess />} />
       </Routes>
       <Footer />
     </div >
