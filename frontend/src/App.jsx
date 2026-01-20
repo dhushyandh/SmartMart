@@ -15,6 +15,9 @@ import Searchbar from './components/Searchbar'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import Verify from './pages/Verify'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import MyProfile from './pages/MyProfile'
 
 
 
@@ -35,6 +38,10 @@ const App = () => {
         <Route path='place-order' element={<PlaceOrder />} />
         <Route path='orders' element={< Orders />} />
         <Route path='verify' element={< Verify />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/my-profile" element={<MyProfile />} />
+
       </Routes>
       <Footer />
     </div >

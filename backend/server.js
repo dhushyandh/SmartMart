@@ -9,8 +9,12 @@ import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import passport from 'passport';
-import './config/passport.js'; // Ensure the .js extension is present
-import authRouter from './routes/auth.js'; // Import your new auth routes
+import './config/passport.js'; 
+import authRouter from './routes/auth.js'; 
+import passwordRouter from './routes/passwordRoute.js';
+import userProfileRouter from './routes/userProfileRoute.js';
+
+
 
 // App config
 const app = express();
@@ -30,7 +34,9 @@ app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
-app.use('/auth', authRouter); // Use the imported authRouter here
+app.use('/auth', authRouter);
+app.use("/api/password", passwordRouter);
+app.use("/api/user", userProfileRouter);
 
 app.get('/', (req, res) => {
     res.send('API Working !');

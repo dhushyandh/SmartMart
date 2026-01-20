@@ -63,8 +63,8 @@ const Login = () => {
         <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" className='w-full px-3 py-2 border border-gray-800' placeholder='Password' required />
 
         <div className="w-full flex items-center justify-between text-sm -mt-2">
-          <p className='cursor-pointer'>Forget Your Password ?</p>
-          <p className='cursor-pointer' onClick={() => setCurrState(currState === 'Login' ? 'Sign Up' : 'Login')}>
+          <p onClick={() => navigate('/forgot-password')} className='cursor-pointer underline'>Forget Your Password ?</p>
+          <p className='cursor-pointer hover:underline underline-offset-2 transition-all' onClick={() => setCurrState(currState === 'Login' ? 'Sign Up' : 'Login')}>
             {currState === 'Login' ? 'Create Account' : 'Already Have An Account ?'}
           </p>
         </div>

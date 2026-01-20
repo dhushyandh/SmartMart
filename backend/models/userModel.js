@@ -1,27 +1,59 @@
 import mongoose from "mongoose";
+import crypto from "crypto";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
+
     email: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
+
     password: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      default: "",
+    },
+
+    address: {
+      type: String,
+      default: "",
     },
     cartData: {
-        type: Object,
-        default: {},
+      type: Object,
+      default: {},
     },
-}, { minimize: false })
 
-const userModel = mongoose.models.user || mongoose.model('user', userSchema);
+    // 🔐 FORGOT PASSWORD FIELDS
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
+  },
+  { minimize: false }
+);
+
+// 🔑 Generate reset password token
+userSchema.methods.getResetPasswordToken = function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+  return resetToken;
+};
+
+const userModel =
+  mongoose.models.user || mongoose.model("user", userSchema);
 
 export default userModel;
-
-

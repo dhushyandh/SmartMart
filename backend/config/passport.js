@@ -9,7 +9,7 @@ passport.use(
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             // Dynamically set callback based on environment
             callbackURL: process.env.NODE_ENV === 'production'
-                ? "https://backend-smartmart.vercel.app/auth/google/callback"
+                ? "https://shopxy-backend.vercel.app/auth/google/callback"
                 : "http://localhost:4000/auth/google/callback",
         },
         async (accessToken, refreshToken, profile, done) => {
