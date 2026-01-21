@@ -24,7 +24,7 @@ authRouter.get(
       { expiresIn: "7d" }
     );
 
-    res.redirect(`${process.env.CLIENT_URL}?token=${token}`);
+    res.redirect(`http://localhost:5173?token=${token}` || `${frontendURL}?token=${token}`);
   }
 );
 
