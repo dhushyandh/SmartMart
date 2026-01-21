@@ -1,21 +1,30 @@
-import express from 'express';
-import passport from 'passport';
-import jwt from 'jsonwebtoken';
+import express from "express";
+import passport from "passport";
+import jwt from "jsonwebtoken";
 
 const authRouter = express.Router();
 
-authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-
-// This handles the return from Google
+// STEP 1: Google Login
 authRouter.get(
-  "/google/callback", 
-  passport.authenticate("google", { session: false, failureRedirect: `${process.env.CLIENT_URL}/login` }),
-  (req, res) => {
-    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
-    // Use CLIENT_URL from your .env (e.g., https://smartmart-murex.vercel.app)
-    const frontendURL = process.env.CLIENT_URL || "http://localhost:5173";
-    res.redirect(`http://localhost:5173?token=${token}` || `${frontendURL}?token=${token}`); 
+// STEP 2: Google Callback
+authRouter.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${process.env.CLIENT_URL}/login`,
+  }),
+  (req, res) => {
+    const token = jwt.sign(
+      { id: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.redirect(`${process.env.CLIENT_URL}?token=${token}`);
   }
 );
 
