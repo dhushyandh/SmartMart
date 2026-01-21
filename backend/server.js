@@ -37,6 +37,12 @@ app.use('/api/order', orderRouter);
 app.use('/auth', authRouter);
 app.use("/api/password", passwordRouter);
 app.use("/api/user", userProfileRouter);
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect(process.env.CLIENT_URL || 'https://smartmart-gamma-red.vercel.app');
+  }
+);
 
 app.get('/', (req, res) => {
     res.send('API Working !');
