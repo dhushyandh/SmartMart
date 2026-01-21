@@ -4,13 +4,13 @@ import jwt from "jsonwebtoken";
 
 const authRouter = express.Router();
 
-// STEP 1: Google Login
+
 authRouter.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// STEP 2: Google Callback
+
 authRouter.get(
   "/google/callback",
   passport.authenticate("google", {
@@ -24,7 +24,7 @@ authRouter.get(
       { expiresIn: "7d" }
     );
 
-    res.redirect(`http://localhost:5173?token=${token}` || `${frontendURL}?token=${token}`);
+    res.redirect(`${process.env.CLIENT_URL}?token=${token}`);
   }
 );
 
