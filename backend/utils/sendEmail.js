@@ -1,21 +1,13 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({ email, subject, message }) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    connectionTimeout: 60 * 1000, 
-    socketTimeout: 60 * 1000,
-  });
-
-  return transporter.sendMail({
-    from: `"SmartMart Support" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: "smart-mart-in.onrender.com",
     to: email,
-    subject,
-    text: message,
+    subject: subject,
+    text: message, 
   });
 };
 
