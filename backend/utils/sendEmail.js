@@ -7,9 +7,11 @@ const sendEmail = async ({ email, subject, message }) => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    connectionTimeout: 60 * 1000, 
+    socketTimeout: 60 * 1000,
   });
 
-  await transporter.sendMail({
+  return transporter.sendMail({
     from: `"SmartMart Support" <${process.env.EMAIL_USER}>`,
     to: email,
     subject,

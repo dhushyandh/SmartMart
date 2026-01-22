@@ -27,24 +27,27 @@ const ForgotPassword = () => {
         { email }
       );
 
-      if (response.data.success) {
-        toast.success("Reset email sent. Check your inbox.", {
-          position: "bottom-right",
-        });
-        navigate("/login");
-      } else {
-        toast.error(response.data.message, {
-          position: "bottom-right",
-        });
-      }
+      toast.success(
+        response.data.message ||
+        "If this email exists, a reset link has been sent. Check your inbox or spam.",
+        { position: "bottom-right" }
+      );
+
+      setEmail("");
+      navigate("/login");
+
     } catch (error) {
-      toast.error("Failed to send reset email", {
-        position: "bottom-right",
-      });
+      toast.success(
+        "If this email exists, a reset link has been sent. Check your inbox or spam.",
+        { position: "bottom-right" }
+      );
+
+      navigate("/login");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <form

@@ -3,16 +3,19 @@ import bcrypt from "bcryptjs";
 import userModel from "../models/userModel.js";
 import sendEmail from "../utils/sendEmail.js";
 
-/* ===========================
-   FORGOT PASSWORD
-=========================== */
+
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
     const user = await userModel.findOne({ email });
+
+
     if (!user) {
-      return res.json({ success: false, message: "User not found" });
+      return res.json({
+        success: true,
+        message: "If this email exists, a reset link has been sent.",
+      });
     }
 
     // Generate token
@@ -24,11 +27,10 @@ export const forgotPassword = async (req, res) => {
       .update(resetToken)
       .digest("hex");
 
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
 
     await user.save({ validateBeforeSave: false });
 
-    // Frontend reset URL
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     const message = `
@@ -40,29 +42,32 @@ ${resetUrl}
 This link will expire in 15 minutes.
 `;
 
-    await sendEmail({
+
+    sendEmail({
       email: user.email,
       subject: "SmartMart Password Reset",
       message,
-    });
+    })
+      .then(() => console.log("Reset email sent"))
+      .catch(err => console.error("Email error:", err));
+
 
     res.json({
       success: true,
-      message: "Password reset email sent",
+      message: "If this email exists, a reset link has been sent.",
     });
 
   } catch (error) {
     console.error(error);
     res.json({
-      success: false,
-      message: "Email could not be sent",
+      success: true,
+      message: "If this email exists, a reset link has been sent.",
     });
   }
 };
 
-/* ===========================
-   RESET PASSWORD
-=========================== */
+
+
 export const resetPassword = async (req, res) => {
   try {
     // Hash token from URL
