@@ -27,27 +27,29 @@ const ForgotPassword = () => {
         { email }
       );
 
-      toast.success(
-        response.data.message ||
-        "If this email exists, a reset link has been sent. Check your inbox or spam.",
-        { position: "bottom-right" }
-      );
+      if (!response.data.success) {
+        toast.error(response.data.message, {
+          position: "bottom-right",
+        });
+        return;
+      }
+
+      toast.success(response.data.message, {
+        position: "bottom-right",
+      });
 
       setEmail("");
       navigate("/login");
 
     } catch (error) {
-      toast.success(
-        "If this email exists, a reset link has been sent. Check your inbox or spam.",
+      toast.error(
+        error.response?.data?.message || "Something went wrong",
         { position: "bottom-right" }
       );
-
-      navigate("/login");
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <form
