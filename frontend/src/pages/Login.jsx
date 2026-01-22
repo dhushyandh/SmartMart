@@ -82,7 +82,7 @@ const Login = () => {
 
       <button type="button" onClick={googleAuth} className='flex items-center justify-center gap-2 w-full border border-gray-800 py-2 hover:bg-gray-50 transition-all cursor-pointer'>
         <FcGoogle size={22} />
-        <span>Continue with Google</span>
+        <span>{currState === 'Login' ? 'Login' : 'Sign Up'} with Google</span>
       </button>
     </div>
   )
