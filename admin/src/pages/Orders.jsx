@@ -5,16 +5,22 @@ import axios from 'axios'
 import { backendUrl, currency } from '../App';
 import { toast } from 'react-toastify'
 import assets from '../assets/assets';
+import Skeleton from '../components/Skeleton';
 
 const Orders = ({ token }) => {
 
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchAllOrders = async () => {
 
-    if (!token) { return null };
+    if (!token) {
+      setLoading(false);
+      return null
+    };
 
     try {
+      setLoading(true);
       const response = await axios.post(backendUrl + '/api/order/list', {}, { headers: { token } })
       if (response.data.success) {
         setOrders(response.data.orders);
@@ -27,6 +33,8 @@ const Orders = ({ token }) => {
     catch (error) {
       console.log(error);
       toast.error(response.data.message)
+    } finally {
+      setLoading(false);
     }
   }
   const updateStatus = async (e, orderId) => {
@@ -54,7 +62,25 @@ const Orders = ({ token }) => {
     <div>
       <h3>Order Page</h3>
       <div>
-        {
+        {loading ? (
+          Array.from({ length: 4 }).map((_, index) => (
+            <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700' key={index}>
+              <Skeleton className='w-12 h-12 rounded' />
+              <div className='flex flex-col gap-3'>
+                <Skeleton className='h-4 w-3/4 rounded' />
+                <Skeleton className='h-3 w-2/3 rounded' />
+                <Skeleton className='h-3 w-1/2 rounded' />
+              </div>
+              <div className='flex flex-col gap-3'>
+                <Skeleton className='h-3 w-1/2 rounded' />
+                <Skeleton className='h-3 w-2/3 rounded' />
+                <Skeleton className='h-3 w-1/3 rounded' />
+              </div>
+              <Skeleton className='h-4 w-16 rounded' />
+              <Skeleton className='h-8 w-32 rounded' />
+            </div>
+          ))
+        ) : (
           orders.map((order, index) => (
             <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700' key={index}>
               <img className='w-12' src={assets.parcel_icon} alt="" />
@@ -92,7 +118,7 @@ const Orders = ({ token }) => {
               </select>
             </div>
           ))
-        }
+        )}
       </div>
     </div>
   )

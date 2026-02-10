@@ -7,6 +7,9 @@ a.active hr {
 *{
     font-family: Outfit;
 }
+button{
+    cursor: pointer;
+}
 .prata-regular {
   font-family: "Prata", serif;
   font-weight: 400;
@@ -15,9 +18,55 @@ a.active hr {
 ::-webkit-scrollbar{
     display: none;
 }
+.skeleton-shimmer{
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease infinite;
+}
+.Toastify__toast{
+    background: #ffffff;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+    border-left-width: 4px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.Toastify__toast-body{
+    font-size: 14px;
+    line-height: 1.4;
+}
+.Toastify__close-button{
+    color: #6b7280;
+    opacity: 1;
+}
+.Toastify__progress-bar{
+    background: #111827;
+}
+@keyframes shimmer{
+    0%{ background-position: 200% 0; }
+    100%{ background-position: -200% 0; }
+}
 @media (max-width:640px) {
     a.active{
         background-color: black;
         color: white;
+    }
+    .Toastify__toast{
+        left: 5%;
+        width: calc(60% - 24px);
+        margin: 0 12px;
+        font-size: 13px;
+        padding: 8px 12px;
+        min-height: unset;
+        border-radius: 10px;
+    }
+    .Toastify__toast-body{
+        padding: 0;
+        margin: 0;
+    }
+    .Toastify__close-button{
+        width: 18px;
+        height: 18px;
     }
 }

@@ -41,6 +41,49 @@ const PlaceOrder = () => {
     setFormData({ ...formData, [name]: value })
 
   }
+  const initPay = (order) => {
+    const RAZORPAY_KEY = order.key || import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.REACT_APP_RAZORPAY_KEY_ID || '';
+
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: order.amount,
+      currency: order.currency,
+      name: 'Order Payment',
+      description: 'Order Payment',
+      order_id: order.id,
+      handler: async (response) => {
+        console.log('Payment successful:', response);
+        toast.success('Payment successful!');
+        try {
+          setCartItems({});
+        } catch (e) { }
+        navigate('/order-success');
+      }
+    };
+
+    if (!options.key) {
+      toast.error('Payment configuration missing. Please contact support.');
+      return;
+    }
+
+    try {
+      const rzp = new window.Razorpay(options);
+
+      rzp.on('payment.failed', function (response) {
+        console.error('Razorpay payment failed:', response);
+        const msg = (response && response.error && response.error.description) || 'Payment failed';
+        toast.error(msg);
+        try {
+          rzp.close();
+        } catch (e) { }
+      });
+
+      rzp.open();
+    } catch (err) {
+      console.error('Razorpay init error:', err);
+      toast.error('Payment initialization failed');
+    }
+  }
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -92,6 +135,37 @@ const PlaceOrder = () => {
             window.location.replace(responseStripe.data.sessionUrl);
           } else {
             toast.error("Stripe session not created");
+          }
+          break;
+        }
+        case 'razorpay': {
+          const responseRazorpay = await axios.post(
+            backendUrl + '/api/order/razorpay',
+            orderData,
+            { headers: { token } }
+          );
+
+          console.log('Razorpay response:', responseRazorpay.data);
+
+          const resp = responseRazorpay && responseRazorpay.data;
+          if (resp && resp.success) {
+            const orderObj = {
+              id: resp.orderId || (resp.order && resp.order.id),
+              amount: resp.amount || (resp.order && resp.order.amount),
+              currency: (resp.currency || (resp.order && resp.order.currency) || 'INR').toUpperCase(),
+              key: resp.key
+            };
+            console.log('Using Razorpay key from response:', orderObj.key);
+            console.log('Client env VITE_RAZORPAY_KEY_ID:', import.meta.env.VITE_RAZORPAY_KEY_ID);
+            console.log('Client env REACT_APP_RAZORPAY_KEY_ID:', import.meta.env.VITE_RAZORPAY_KEY_ID);
+
+            if (!orderObj.id || !orderObj.amount) {
+              toast.error('Invalid Razorpay order response');
+            } else {
+              initPay(orderObj);
+            }
+          } else {
+            toast.error((resp && resp.message) || 'Razorpay order creation failed');
           }
           break;
         }

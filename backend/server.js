@@ -13,6 +13,8 @@ import './config/passport.js';
 import authRouter from './routes/auth.js'; 
 import passwordRouter from './routes/passwordRoute.js';
 import userProfileRouter from './routes/userProfileRoute.js';
+import bookRoutes from "./routes/bookRoutes.js";
+import contactRouter from "./routes/contactRoute.js";
 
 
 
@@ -28,6 +30,7 @@ connectCloudinary();
 app.use(express.json());
 app.use(cors());
 app.use(passport.initialize());
+app.use('/uploads', express.static('uploads'));
 
 // API endpoints
 app.use('/api/user', userRouter);
@@ -37,6 +40,9 @@ app.use('/api/order', orderRouter);
 app.use('/auth', authRouter);
 app.use("/api/password", passwordRouter);
 app.use("/api/user", userProfileRouter);
+app.use("/api", bookRoutes);
+app.use("/api", contactRouter);
+
 
 app.get('/', (req, res) => {
     res.send('API Working !');

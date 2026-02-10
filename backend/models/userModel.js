@@ -14,11 +14,24 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
+    role: {
+      type: String,
+      default: "user",
+    },
+
     password: {
       type: String,
       required: true,
     },
     phone: {
+      type: String,
+      default: "",
+    },
+    avatar: {
+      type: String,
+      default: "",
+    },
+    googleImage: {
       type: String,
       default: "",
     },
@@ -36,7 +49,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
-  { minimize: false }
+  { minimize: false, timestamps: true }
 );
 
 // 🔑 Generate reset password token

@@ -3,8 +3,8 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const createToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET);
+const createToken = (id, role = "user") => {
+    return jwt.sign({ id, role }, process.env.JWT_SECRET);
 }
 
 //Route For User Login
@@ -21,7 +21,7 @@ const loginUser = async (req, res) => {
             return res.json({ success: false, message: "Invalid Credentials" })
         }
         else {
-            const token = createToken(user._id);
+            const token = createToken(user._id, user.role || "user");
             return res.json({ success: true, token, message: "User Logged In Successfully" })
         }
     }
@@ -58,7 +58,7 @@ const registerUser = async (req, res) => {
             password: hashedPassword
         })
         await newUser.save();
-        const token = createToken(newUser._id);
+        const token = createToken(newUser._id, newUser.role || "user");
 
         return res.json({ success: true, token, message: "User Registered Successfully" })
     }
@@ -96,5 +96,27 @@ const adminLogin = async (req, res) => {
     }
 };
 
+const getUserCount = async (req, res) => {
+    try {
+        const totalUsers = await userModel.countDocuments();
+        return res.json({ success: true, totalUsers });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+};
 
-export { loginUser, registerUser, adminLogin } 
+const getUsers = async (req, res) => {
+    try {
+        const users = await userModel
+            .find({})
+            .select('-password -resetPasswordToken -resetPasswordExpire')
+            .sort({ createdAt: -1 });
+
+        return res.json({ success: true, users });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+};
+
+
+export { loginUser, registerUser, adminLogin, getUserCount, getUsers } 

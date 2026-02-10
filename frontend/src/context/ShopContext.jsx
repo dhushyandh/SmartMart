@@ -13,8 +13,12 @@ const ShopContextProvider = (props) => {
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
     const [products, setProducts] = useState([]);
+    const [productsLoading, setProductsLoading] = useState(true);
     const [token, setToken] = useState('');
     const [cartItems, setCartItems] = useState({});
+    const [userRole, setUserRole] = useState('user');
+    const [locationLabel, setLocationLabel] = useState('');
+    const [wishlistItems, setWishlistItems] = useState([]);
 
     const navigate = useNavigate();
 
@@ -61,6 +65,36 @@ const ShopContextProvider = (props) => {
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
     }, [cartItems]);
 
+    useEffect(() => {
+        const storedWishlist = localStorage.getItem('wishlistItems');
+        if (storedWishlist) {
+            try {
+                setWishlistItems(JSON.parse(storedWishlist));
+            } catch (error) {
+                setWishlistItems([]);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
+    }, [wishlistItems]);
+
+    useEffect(() => {
+        const savedLocation = localStorage.getItem('locationLabel');
+        if (savedLocation) {
+            setLocationLabel(savedLocation);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (locationLabel) {
+            localStorage.setItem('locationLabel', locationLabel);
+        } else {
+            localStorage.removeItem('locationLabel');
+        }
+    }, [locationLabel]);
+
     // 4. LOGOUT FUNCTION
     const logout = () => {
         localStorage.removeItem('token');
@@ -72,7 +106,7 @@ const ShopContextProvider = (props) => {
 
     const addToCart = async (itemId, size) => {
         if (!size) {
-            toast.error('Select Product Size', { position: 'bottom-right', pauseOnHover: false });
+            toast.error('Select book format', { position: 'bottom-right', pauseOnHover: false });
             return;
         }
 
@@ -89,6 +123,8 @@ const ShopContextProvider = (props) => {
             cartData[itemId][size] = 1;
         }
         setCartItems(cartData);
+
+        toast.success('Added to cart', { position: 'bottom-right', pauseOnHover: false, autoClose: 2000 });
 
         if (token) {
             try {
@@ -143,7 +179,25 @@ const ShopContextProvider = (props) => {
         return totalAmount;
     };
 
+    const toggleWishlist = (itemId) => {
+        setWishlistItems((prev) => {
+            const exists = prev.includes(itemId);
+            const next = exists ? prev.filter((id) => id !== itemId) : [...prev, itemId];
+            toast.success(exists ? 'Removed from wishlist' : 'Added to wishlist', {
+                position: 'bottom-right',
+                pauseOnHover: false,
+                autoClose: 2000
+            });
+            return next;
+        });
+    };
+
+    const isInWishlist = (itemId) => wishlistItems.includes(itemId);
+
+    const getWishlistCount = () => wishlistItems.length;
+
     const getProductsData = async () => {
+        setProductsLoading(true);
         try {
             const response = await axios.get(backendUrl + '/api/product/list');
             if (response.data.success) {
@@ -153,6 +207,8 @@ const ShopContextProvider = (props) => {
             }
         } catch (error) {
             toast.error(error.message);
+        } finally {
+            setProductsLoading(false);
         }
     };
 
@@ -182,12 +238,55 @@ const ShopContextProvider = (props) => {
         }
     }, [token]);
 
+    useEffect(() => {
+        if (!token) {
+            setUserRole('user');
+            return;
+        }
+
+        let decodedRole = '';
+        try {
+            const payload = token.split('.')[1];
+            const decoded = JSON.parse(atob(payload));
+            decodedRole = decoded.role || '';
+        } catch (error) {
+            decodedRole = '';
+        }
+
+        if (decodedRole) {
+            setUserRole(decodedRole);
+            return;
+        }
+
+        const fetchRole = async () => {
+            try {
+                const response = await axios.post(
+                    backendUrl + '/api/user/profile',
+                    {},
+                    { headers: { token } }
+                );
+                if (response.data.success) {
+                    setUserRole(response.data.user?.role || 'user');
+                } else {
+                    setUserRole('user');
+                }
+            } catch (error) {
+                setUserRole('user');
+            }
+        };
+
+        fetchRole();
+    }, [token, backendUrl]);
+
     const value = {
-        products, currency, delivery_fee,
+        products, productsLoading, currency, delivery_fee,
         search, setSearch, showSearch, setShowSearch,
         cartItems, setCartItems, addToCart,
         getCartCount, updateQuantity, getCartAmount,
-        navigate, backendUrl, token, setToken, logout
+        navigate, backendUrl, token, setToken, logout,
+        locationLabel, setLocationLabel,
+        userRole,
+        wishlistItems, toggleWishlist, isInWishlist, getWishlistCount
     };
 
     return (

@@ -27,6 +27,26 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    department: {
+        type: String,
+        default: '',
+    },
+    author: {
+        type: String,
+        default: '',
+    },
+    edition: {
+        type: String,
+        default: '',
+    },
+    semester: {
+        type: String,
+        default: '',
+    },
+    publisher: {
+        type: String,
+        default: '',
+    },
     sizes: {
         type: Array,
         required: true,
@@ -38,6 +58,33 @@ const productSchema = new mongoose.Schema({
     date: {
         type: Number,
         required: true,
+    },
+    reviews: {
+        type: [
+            {
+                userId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'user',
+                },
+                name: {
+                    type: String,
+                    default: '',
+                },
+                rating: {
+                    type: Number,
+                    default: 0,
+                },
+                comment: {
+                    type: String,
+                    default: '',
+                },
+                date: {
+                    type: Number,
+                    default: () => Date.now(),
+                },
+            },
+        ],
+        default: [],
     },
 })
 

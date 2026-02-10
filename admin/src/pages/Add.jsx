@@ -15,10 +15,15 @@ const Add = ({ token }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('Men');
-  const [subCategory, setSubCategory] = useState('Topwear');
+  const [category, setCategory] = useState('CSE');
+  const [subCategory, setSubCategory] = useState('Textbook');
+  const [department, setDepartment] = useState('CSE');
+  const [author, setAuthor] = useState('');
+  const [edition, setEdition] = useState('');
+  const [semester, setSemester] = useState('');
+  const [publisher, setPublisher] = useState('');
   const [bestseller, setBestseller] = useState(false);
-  const [sizes, setSizes] = useState([]);
+  const [sizes] = useState(['Standard']);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -33,6 +38,11 @@ const Add = ({ token }) => {
       formData.append('subCategory', subCategory);
       formData.append('bestseller', bestseller);
       formData.append('sizes', JSON.stringify(sizes));
+      formData.append('department', department);
+      formData.append('author', author);
+      formData.append('edition', edition);
+      formData.append('semester', semester);
+      formData.append('publisher', publisher);
 
       image1 && formData.append('image1', image1)
       image2 && formData.append('image2', image2)
@@ -50,6 +60,13 @@ const Add = ({ token }) => {
         setImage3(false)
         setImage4(false)
         setPrice('')
+        setDepartment('CSE')
+        setCategory('CSE')
+        setSubCategory('Textbook')
+        setAuthor('')
+        setEdition('')
+        setSemester('')
+        setPublisher('')
       }
       else{
         toast.error(response.data.message)
@@ -86,54 +103,61 @@ const Add = ({ token }) => {
         </label>
       </div>
       <div className='w-full'>
-        <p className='mb-2'>Product Name</p>
+        <p className='mb-2'>Book Title</p>
         <input onChange={(e) => setName(e.target.value)} value={name} className='w-full max-w-125 px-3 py-2' type="text" placeholder='Type Here' required />
       </div>
       <div className='w-full'>
-        <p className='mb-2'>Product description</p>
+        <p className='mb-2'>Book Description</p>
         <textarea onChange={(e) => setDescription(e.target.value)} value={description} className='w-full max-w-125 px-3 py-2' type="text" placeholder='Write Content Here' required />
       </div>
       <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
         <div>
-          <p className='mb-2'>Product Category</p>
-          <select onChange={(e) => setCategory(e.target.value)} className='w-full px-3 py-2' >
-            <option value="Men">Men</option>
-            <option value="Women">Women</option>
-            <option value="kids">Kids</option>
-          </select >
-        </div>
-        <div>
-          <p className='mb-2'>Sub Category</p>
-          <select onChange={(e) => setSubCategory(e.target.value)} className='w-full px-3 py-2'>
-            <option value="Topwear">Topwear</option>
-            <option value="Bottomwear">Bottomwear</option>
-            <option value="Winterwear">Winterwear</option>
+          <p className='mb-2'>Department</p>
+          <select
+            value={department}
+            onChange={(e) => {
+              setDepartment(e.target.value)
+              setCategory(e.target.value)
+            }}
+            className='w-full px-3 py-2'
+          >
+            <option value="CSE">CSE</option>
+            <option value="IT">IT</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="AIDS">AIDS</option>
           </select>
         </div>
         <div>
-          <p className='mb-2'>Product Price</p>
-          <input onChange={(e) => setPrice(e.target.value)} value={price} type="number" placeholder="25" className="w-full px-3 py-2 sm:w-30" />
+          <p className='mb-2'>Book Type</p>
+          <select onChange={(e) => setSubCategory(e.target.value)} className='w-full px-3 py-2' value={subCategory}>
+            <option value="Textbook">Textbook</option>
+            <option value="Reference">Reference</option>
+            <option value="Guide">Guide</option>
+          </select>
+        </div>
+        <div>
+          <p className='mb-2'>Book Price</p>
+          <input onChange={(e) => setPrice(e.target.value)} value={price} type="number" placeholder="250" className="w-full px-3 py-2 sm:w-30" />
         </div>
       </div>
-      <div>
-        <p className='mb-2'>Product Sizes</p>
-        <div className='flex gap-3'>
-          <div onClick={() => setSizes(prev => prev.includes("S") ? prev.filter(item => item !== "S") : [...prev, "S"])}>
-            <p className={`${sizes.includes("S") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>S</p>
-          </div>
-          <div onClick={() => setSizes(prev => prev.includes("M") ? prev.filter(item => item !== "M") : [...prev, "M"])}>
-            <p className={`${sizes.includes("M") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>M</p>
-          </div>
-          <div onClick={() => setSizes(prev => prev.includes("L") ? prev.filter(item => item !== "L") : [...prev, "L"])}>
-            <p className={`${sizes.includes("L") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>L</p>
-          </div>
-          <div onClick={() => setSizes(prev => prev.includes("XL") ? prev.filter(item => item !== "XL") : [...prev, "XL"])}>
-            <p className={`${sizes.includes("XL") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>XL</p>
-          </div>
-          <div onClick={() => setSizes(prev => prev.includes("XXL") ? prev.filter(item => item !== "XXL") : [...prev, "XXL"])}>
-            <p className={`${sizes.includes("XXL") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>XXL</p>
-          </div>
+      <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
+        <div className='w-full sm:max-w-80'>
+          <p className='mb-2'>Author</p>
+          <input onChange={(e) => setAuthor(e.target.value)} value={author} className='w-full px-3 py-2' type="text" placeholder='Author name' />
         </div>
+        <div className='w-full sm:max-w-48'>
+          <p className='mb-2'>Edition</p>
+          <input onChange={(e) => setEdition(e.target.value)} value={edition} className='w-full px-3 py-2' type="text" placeholder='e.g., 5th' />
+        </div>
+        <div className='w-full sm:max-w-48'>
+          <p className='mb-2'>Semester</p>
+          <input onChange={(e) => setSemester(e.target.value)} value={semester} className='w-full px-3 py-2' type="text" placeholder='e.g., 3' />
+        </div>
+      </div>
+      <div className='w-full sm:max-w-80'>
+        <p className='mb-2'>Publisher</p>
+        <input onChange={(e) => setPublisher(e.target.value)} value={publisher} className='w-full px-3 py-2' type="text" placeholder='Publisher name' />
       </div>
       <div className='flex gap-2 mt-2'>
         <input onChange={() => setBestseller(prev => !prev)} checked={bestseller} type="checkbox" className="" id="bestseller" />

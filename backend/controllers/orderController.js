@@ -1,14 +1,60 @@
 import orderModel from "../models/orderModel.js";
 import userModel from '../models/userModel.js'
 import Stripe from 'stripe';
+import Razorpay from 'razorpay';
+import sendEmail from "../utils/sendEmail.js";
 
 // global vars 
 const currency = 'inr';
 const deliveryCharge = 50;
 
+const formatOrderEmail = ({ order, user }) => {
+    const lines = (order.items || []).map((item) => {
+        const title = item.name || 'Item';
+        const qty = item.quantity || 1;
+        const size = item.size ? ` (${item.size})` : '';
+        const price = typeof item.price === 'number' ? `₹${item.price}` : '';
+        return `- ${title}${size} x ${qty} ${price}`.trim();
+    });
+
+    const address = order.address || {};
+    const addressLine = [
+        address.street,
+        address.city,
+        address.state,
+        address.country,
+        address.zipcode,
+    ].filter(Boolean).join(', ');
+
+    return `
+Hello ${user?.name || 'Customer'},
+
+Your order has been placed successfully.
+
+Order details:
+${lines.join('\n')}
+
+Total Amount: ₹${order.amount}
+Payment Method: ${order.paymentMethod}
+Payment Status: ${order.payment ? 'Paid' : 'Pending'}
+
+Delivery Address:
+${address.firstName || ''} ${address.lastName || ''}
+${addressLine}
+${address.phone || ''}
+
+Thank you for shopping with SmartMart.
+`;
+};
+
 
 // gateway intialize
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const razorpayInstance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+
+})
 
 
 // Placing orders using cod method
@@ -30,6 +76,19 @@ const placeOrder = async (req, res) => {
         await newOrder.save();
 
         await userModel.findByIdAndUpdate(userId, { $set: { cartData: {} } })
+
+        try {
+            const user = await userModel.findById(userId).select('name email');
+            if (user?.email) {
+                await sendEmail({
+                    to: user.email,
+                    subject: 'SmartMart Order Confirmation',
+                    text: formatOrderEmail({ order: newOrder, user }),
+                });
+            }
+        } catch (emailError) {
+            console.log('Order email failed:', emailError?.message || emailError);
+        }
         res.json({ success: true, message: "Order Placed Successfully" })
     }
     catch (error) {
@@ -106,6 +165,19 @@ const verifyStripe = async (req, res) => {
 
             await userModel.findByIdAndUpdate(orderData.userId, { cartData: {} });
 
+            try {
+                const user = await userModel.findById(orderData.userId).select('name email');
+                if (user?.email) {
+                    await sendEmail({
+                        to: user.email,
+                        subject: 'SmartMart Order Confirmation',
+                        text: formatOrderEmail({ order: newOrder, user }),
+                    });
+                }
+            } catch (emailError) {
+                console.log('Order email failed:', emailError?.message || emailError);
+            }
+
             res.json({ success: true });
         } else {
             res.json({ success: false });
@@ -120,6 +192,72 @@ const verifyStripe = async (req, res) => {
 // Placing orders using Razorpay method
 const placeOrderRazorpay = async (req, res) => {
 
+    try {
+        const { userId, items, amount, address } = req.body;
+
+        const orderData = {
+            userId,
+            items,
+            amount,
+            paymentMethod: "Razorpay",
+            payment: false,
+            date: Date.now(),
+            address
+        }
+
+        const newOrder = new orderModel(orderData);
+        await newOrder.save();
+
+        const options = {
+            amount: amount * 100,
+            currency: currency.toUpperCase(),
+            receipt: newOrder._id.toString(),
+            notes: {
+                userId,
+                items: JSON.stringify(items),
+                amount,
+                address: JSON.stringify(address)
+            }
+        };
+        await razorpayInstance.orders.create(options, (err, order) => {
+            if (err) {
+                console.log(err);
+                res.json({ success: false, message: err.message });
+            } else {
+                try {
+                    userModel.findById(userId).select('name email').then((user) => {
+                        if (user?.email) {
+                            sendEmail({
+                                to: user.email,
+                                subject: 'SmartMart Order Confirmation',
+                                text: formatOrderEmail({ order: newOrder, user }),
+                            });
+                        }
+                    });
+                } catch (emailError) {
+                    console.log('Order email failed:', emailError?.message || emailError);
+                }
+
+                const publicKey = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || process.env.REACT_APP_RAZORPAY_KEY_ID || (razorpayInstance && razorpayInstance.key_id) || '';
+                console.log('Returning Razorpay public key (may be empty):', !!publicKey);
+                if (!publicKey) console.warn('Razorpay public key not found in environment variables');
+
+                res.json({ 
+                    success: true, 
+                    orderId: order.id, 
+                    amount: order.amount,
+                    currency: options.currency,
+                    order,
+                    key: publicKey
+                });
+            }
+        });
+    }
+
+    catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
 }
 
 // All orders data for Admin panel

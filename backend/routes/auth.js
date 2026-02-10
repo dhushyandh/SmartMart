@@ -19,7 +19,7 @@ authRouter.get(
   }),
   (req, res) => {
     const token = jwt.sign(
-      { id: req.user._id },
+      { id: req.user._id, role: req.user.role || "user" },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );

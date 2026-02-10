@@ -30,8 +30,8 @@ const Footer = () => {
         <div>
           <img src={assets.logo} className='mb-5 w-32' alt="" />
           <p className='w-full md:w-2/3 text-gray-600'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Labore nam minima, eligendi commodi molestias quasi!
+            SmartMart is a department-wise online bookstore for college students,
+            focused on CSE, IT, ECE, EEE, and AIDS academic titles.
           </p>
 
           
@@ -46,11 +46,11 @@ const Footer = () => {
 
         
         <div>
-          <p className='text-xl font-medium mb-5'>COMPANY</p>
+          <p className='text-xl font-medium mb-5'>SMARTMART</p>
           <ul className='flex flex-col gap-1 text-gray-600'>
-            <li>HOME</li>
-            <li>About us</li>
-            <li>Delivery</li>
+            <li>Home</li>
+            <li>About SmartMart</li>
+            <li>Departments</li>
             <li>Privacy Policy</li>
           </ul>
         </div>
@@ -59,8 +59,8 @@ const Footer = () => {
         <div>
           <p className='text-xl font-medium mb-5'>Get In Touch</p>
           <ul className='flex flex-col gap-1 text-gray-600'>
-            <li>+1-223-435-7876</li>
-            <li>contact@email.com</li>
+            <li>smartmart.project@gmail.com</li>
+            <li>College Campus, Dept. of CSE</li>
           </ul>
         </div>
       </div>

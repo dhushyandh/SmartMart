@@ -20,7 +20,11 @@ passport.use(
                         name: profile.displayName,
                         email: profile.emails[0].value,
                         password: Math.random().toString(36).slice(-8),
+                        googleImage: profile.photos?.[0]?.value || "",
                     });
+                } else if (!user.googleImage && profile.photos?.[0]?.value) {
+                    user.googleImage = profile.photos[0].value;
+                    await user.save();
                 }
 
                 return done(null, user);
