@@ -11,6 +11,8 @@ const List = ({ token }) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
+  const [stockItem, setStockItem] = useState(null);
+  const [stockValue, setStockValue] = useState('');
   const [imageFiles, setImageFiles] = useState([null, null, null, null]);
   const [imagePreviews, setImagePreviews] = useState(['', '', '', '']);
   const [formData, setFormData] = useState({
@@ -128,6 +130,33 @@ const List = ({ token }) => {
     }
   }
 
+  const openStockModal = (item) => {
+    setStockItem(item);
+    setStockValue(typeof item?.stock === 'number' ? String(item.stock) : '0');
+  }
+
+  const updateStock = async () => {
+    if (!stockItem?._id) return;
+
+    try {
+      const payload = new FormData();
+      payload.append('id', stockItem._id);
+      payload.append('stock', stockValue);
+
+      const response = await axios.put(backendUrl + '/api/product/update', payload, { headers: { token } });
+      if (response.data.success) {
+        toast.success('Stock updated');
+        setStockItem(null);
+        await fetchList();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to update stock');
+    }
+  }
+
   useEffect(() => {
     fetchList()
   }, [])
@@ -147,20 +176,22 @@ const List = ({ token }) => {
       <p className='mb-2'>All Books List</p>
       <div className='flex flex-col gap-2'>
         {/* List Table Title */}
-        <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm '>
+        <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm '>
           <b>Image</b>
           <b>Title</b>
           <b>Department</b>
+          <b>Stock</b>
           <b>Price</b>
           <b className='text-center'>Actions</b>
         </div>
         {/* -------------Product List-------------- */}
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
-            <div className='grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2 py-2 px-2 border text-sm' key={index}>
+            <div className='grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center gap-2 py-2 px-2 border text-sm' key={index}>
               <Skeleton className='w-12 h-12 rounded' />
               <Skeleton className='h-4 w-3/4 rounded' />
               <Skeleton className='h-4 w-1/2 rounded' />
+              <Skeleton className='h-4 w-10 rounded' />
               <Skeleton className='h-4 w-12 rounded' />
               <div className='flex items-center justify-end md:justify-center gap-3'>
                 <Skeleton className='h-7 w-16 rounded' />
@@ -170,10 +201,11 @@ const List = ({ token }) => {
           ))
         ) : (
           list.map((item, index) => (
-            <div className='grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 border text-sm' key={index}>
+            <div className='grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 border text-sm' key={index}>
               <img className='w-12' src={item.images?.[0]?.url} alt="" />
               <p className=''>{item.name}</p>
               <p>{item.department || item.category}</p>
+              <p>{typeof item.stock === 'number' ? item.stock : 0}</p>
               <p>{currency}{item.price}</p>
               <div className='flex items-center justify-end md:justify-center gap-3 text-sm'>
                 <button
@@ -181,6 +213,12 @@ const List = ({ token }) => {
                   className='px-3 py-1 rounded-md border hover:bg-gray-50'
                 >
                   Edit
+                </button>
+                <button
+                  onClick={() => openStockModal(item)}
+                  className='px-3 py-1 rounded-md border hover:bg-gray-50'
+                >
+                  Stock
                 </button>
                 <button
                   onClick={() => removeProduct(item._id)}
@@ -352,6 +390,59 @@ const List = ({ token }) => {
                 className='px-5 py-2 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-900'
               >
                 Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {stockItem && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4'>
+          <div className='w-full max-w-md rounded-2xl bg-white shadow-xl'>
+            <div className='flex items-center justify-between border-b px-6 py-4'>
+              <h3 className='text-lg font-semibold'>Update Stock</h3>
+              <button
+                type='button'
+                onClick={() => setStockItem(null)}
+                className='text-gray-400 hover:text-gray-700'
+                aria-label='Close'
+              >
+                ×
+              </button>
+            </div>
+
+            <div className='px-6 py-5 space-y-4 text-sm'>
+              <div>
+                <p className='text-xs uppercase tracking-[0.2em] text-gray-400'>Product</p>
+                <p className='mt-1 font-semibold text-gray-900'>{stockItem.name}</p>
+              </div>
+              <div>
+                <label className='block text-gray-600 mb-1'>Stock Available</label>
+                <input
+                  type='number'
+                  min='0'
+                  value={stockValue}
+                  onChange={(e) => setStockValue(e.target.value)}
+                  className='w-full border rounded-lg px-3 py-2'
+                  placeholder='0'
+                />
+              </div>
+              <p className='text-xs text-gray-500'>Stock updates immediately after saving.</p>
+            </div>
+
+            <div className='px-6 pb-6 flex justify-end gap-3'>
+              <button
+                type='button'
+                onClick={() => setStockItem(null)}
+                className='px-4 py-2 rounded-lg border text-sm font-medium'
+              >
+                Cancel
+              </button>
+              <button
+                type='button'
+                onClick={updateStock}
+                className='px-5 py-2 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-900'
+              >
+                Save Stock
               </button>
             </div>
           </div>

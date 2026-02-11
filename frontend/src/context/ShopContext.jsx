@@ -110,6 +110,11 @@ const ShopContextProvider = (props) => {
             return;
         }
 
+        const product = products.find((item) => item._id === itemId);
+        if (product && typeof product.stock === 'number' && product.stock <= 0) {
+            toast.warn('This book is currently out of stock', { position: 'bottom-right', pauseOnHover: false });
+        }
+
         let cartData = structuredClone(cartItems);
 
         if (cartData[itemId]) {

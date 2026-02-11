@@ -1,5 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import userModel from '../models/userModel.js'
+import productModel from '../models/productModel.js';
 import Stripe from 'stripe';
 import Razorpay from 'razorpay';
 import sendEmail from "../utils/sendEmail.js";
@@ -7,6 +8,22 @@ import sendEmail from "../utils/sendEmail.js";
 // global vars 
 const currency = 'inr';
 const deliveryCharge = 50;
+
+const decrementStockForItems = async (items = []) => {
+    if (!items.length) return;
+
+    for (const item of items) {
+        const productId = item?._id || item?.productId || item?.id;
+        const quantity = Number(item?.quantity) || 0;
+        if (!productId || quantity <= 0) continue;
+
+        const product = await productModel.findById(productId).select('stock');
+        if (!product) continue;
+
+        const nextStock = Math.max(0, (Number(product.stock) || 0) - quantity);
+        await productModel.findByIdAndUpdate(productId, { $set: { stock: nextStock } });
+    }
+};
 
 const formatOrderEmail = ({ order, user }) => {
     const lines = (order.items || []).map((item) => {
@@ -163,6 +180,8 @@ const verifyStripe = async (req, res) => {
             const newOrder = new orderModel(orderData);
             await newOrder.save();
 
+            await decrementStockForItems(orderData.items || []);
+
             await userModel.findByIdAndUpdate(orderData.userId, { cartData: {} });
 
             try {
@@ -185,6 +204,30 @@ const verifyStripe = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: error.message });
+    }
+};
+
+const verifyRazorpay = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        if (!orderId) {
+            return res.json({ success: false, message: 'Order ID required' });
+        }
+
+        const order = await orderModel.findById(orderId);
+        if (!order) {
+            return res.json({ success: false, message: 'Order not found' });
+        }
+
+        if (!order.payment) {
+            await orderModel.findByIdAndUpdate(orderId, { $set: { payment: true } });
+            await decrementStockForItems(order.items || []);
+        }
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.log(error);
+        return res.json({ success: false, message: error.message });
     }
 };
 
@@ -248,7 +291,8 @@ const placeOrderRazorpay = async (req, res) => {
                     amount: order.amount,
                     currency: options.currency,
                     order,
-                    key: publicKey
+                    key: publicKey,
+                    orderDbId: newOrder._id
                 });
             }
         });
@@ -303,4 +347,4 @@ const updateStatus = async (req, res) => {
     }
 }
 
-export { placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, orderStatus, updateStatus, verifyStripe }
+export { placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, orderStatus, updateStatus, verifyStripe, verifyRazorpay }

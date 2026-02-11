@@ -96,47 +96,63 @@ const Address = () => {
   const savedAddress = locationText || locationLabel
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Saved Address</h2>
-      <div className="mt-4">
-        <label className="block text-sm text-gray-600 mb-1">Default Address</label>
-        <input
-          value={addressInput}
-          onChange={(e) => setAddressInput(e.target.value)}
-          className="w-full border rounded-lg px-3 py-2 text-sm"
-          placeholder="Enter your address"
-        />
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Addresses</p>
+          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Shipping Address</h2>
+        </div>
         <button
-          onClick={handleManualSave}
-          className="mt-3 px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-slate-800"
+          onClick={getLocation}
         >
-          Save Address
+          <FaMapMarkerAlt />
+          Use Current Location
         </button>
       </div>
-      <button
-        className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800"
-        onClick={getLocation}
-      >
-        <FaMapMarkerAlt />
-        Use Current Location
-      </button>
-      {loading && <p className="mt-3 text-sm text-gray-500">Fetching location...</p>}
-      {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
-      {savedAddress && !loading && (
-        <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-4">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-gray-900">Saved Address</p>
+
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6">
+        <div>
+          <label className="block text-sm text-slate-600 mb-1">Default Address</label>
+          <textarea
+            value={addressInput}
+            onChange={(e) => setAddressInput(e.target.value)}
+            className="w-full min-h-[120px] border border-slate-200 rounded-2xl px-4 py-3 text-sm"
+            placeholder="Enter your address"
+          />
+          <div className="mt-4 flex flex-wrap gap-3">
             <button
-              type="button"
-              onClick={deleteAddress}
-              className="text-xs font-semibold text-red-600 hover:text-red-700"
+              onClick={handleManualSave}
+              className="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800"
             >
-              Delete
+              Save Address
             </button>
+            {loading && <p className="text-sm text-slate-500">Fetching location...</p>}
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
-          <p className="mt-2 text-sm text-gray-700">{savedAddress}</p>
         </div>
-      )}
+
+        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-slate-900">Saved Address</p>
+            {savedAddress && !loading && (
+              <button
+                type="button"
+                onClick={deleteAddress}
+                className="text-xs font-semibold text-rose-600 hover:text-rose-700"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+          <p className="mt-3 text-sm text-slate-700">
+            {savedAddress ? savedAddress : 'No address saved yet.'}
+          </p>
+          <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-3 text-xs text-slate-500">
+            Keep your address updated to get faster delivery estimates.
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

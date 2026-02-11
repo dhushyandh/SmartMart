@@ -54,6 +54,18 @@ const PlaceOrder = () => {
       handler: async (response) => {
         console.log('Payment successful:', response);
         toast.success('Payment successful!');
+        if (order.orderDbId) {
+          try {
+            await axios.post(
+              backendUrl + '/api/order/verifyRazorpay',
+              { orderId: order.orderDbId },
+              { headers: { token } }
+            );
+          } catch (error) {
+            console.log(error);
+            toast.error('Unable to confirm payment. Please contact support.');
+          }
+        }
         try {
           setCartItems({});
         } catch (e) { }
@@ -153,7 +165,8 @@ const PlaceOrder = () => {
               id: resp.orderId || (resp.order && resp.order.id),
               amount: resp.amount || (resp.order && resp.order.amount),
               currency: (resp.currency || (resp.order && resp.order.currency) || 'INR').toUpperCase(),
-              key: resp.key
+              key: resp.key,
+              orderDbId: resp.orderDbId
             };
             console.log('Using Razorpay key from response:', orderObj.key);
             console.log('Client env VITE_RAZORPAY_KEY_ID:', import.meta.env.VITE_RAZORPAY_KEY_ID);

@@ -93,65 +93,126 @@ const ProfilePage = ({ user, onUserUpdate }) => {
   }
 
   return (
-    <div className="bg-slate-50 -mx-4 sm:-mx-[5vw] md:-mx-[7vw] lg:-mx-[9vw]">
-      <div className="bg-gray-900">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex items-center justify-between">
-          <div className="flex items-center gap-4 text-white">
-            <div className="w-16 h-16 rounded-full border-2 border-gray-700 flex items-center justify-center text-xl font-semibold bg-gray-800 overflow-hidden">
-              {avatarUrl ? (
-                <img
-                  src={resolveAvatarUrl(avatarUrl)}
-                  alt={userName}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                avatarLetter
-              )}
+    <div className="relative -mx-4 sm:-mx-[5vw] md:-mx-[7vw] lg:-mx-[9vw]">
+      <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-rose-50 to-sky-50">
+        <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-rose-200/40 blur-3xl" />
+        <div className="absolute -bottom-40 -left-20 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-6 items-center">
+            <div className="bg-white/70 backdrop-blur-xl border border-white/70 rounded-3xl p-6 sm:p-8 shadow-[0_25px_70px_rgba(15,23,42,0.08)]">
+              <div className="flex flex-wrap items-center gap-5">
+                <div className="w-20 h-20 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl font-semibold overflow-hidden">
+                  {avatarUrl ? (
+                    <img
+                      src={resolveAvatarUrl(avatarUrl)}
+                      alt={userName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    avatarLetter
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">My Profile</p>
+                  <h3 className="text-2xl sm:text-3xl font-semibold text-slate-900">{userName}</h3>
+                  <div className="mt-2 space-y-1 text-sm text-slate-600">
+                    {userPhone && <p>{userPhone}</p>}
+                    <p>{userEmail}</p>
+                    {joinedDate && <p className="text-xs text-slate-500">Joined {joinedDate}</p>}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                      <FaShoppingCart />
+                    </span>
+                    <div>
+                      <p className="text-xs text-slate-500">Orders</p>
+                      <p className="text-sm font-semibold text-slate-900">Track history</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                      <FaHeart />
+                    </span>
+                    <div>
+                      <p className="text-xs text-slate-500">Wishlist</p>
+                      <p className="text-sm font-semibold text-slate-900">Saved picks</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+                      <FaMapMarkerAlt />
+                    </span>
+                    <div>
+                      <p className="text-xs text-slate-500">Address</p>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {userAddress ? 'On file' : 'Add one'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold">{userName}</h3>
-              {userPhone && <p className="text-sm text-gray-200">{userPhone}</p>}
-              <p className="text-sm text-gray-200">{userEmail}</p>
-              {joinedDate && <p className="text-xs text-gray-300 mt-1">Joined: {joinedDate}</p>}
+
+            <div className="rounded-3xl border border-slate-200 bg-slate-900 text-white p-6 sm:p-8 shadow-[0_20px_60px_rgba(15,23,42,0.35)]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Quick Actions</p>
+                  <h4 className="mt-2 text-xl font-semibold">Keep your profile fresh</h4>
+                  <p className="mt-2 text-sm text-slate-300">Update your details, photo, and address in seconds.</p>
+                </div>
+                <div className="hidden sm:flex w-14 h-14 rounded-2xl bg-white/10 items-center justify-center">
+                  <FaBoxOpen className="text-xl" />
+                </div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  onClick={() => setIsViewing(true)}
+                  className="px-5 py-2.5 rounded-xl bg-white text-slate-900 text-sm font-semibold hover:bg-slate-100"
+                >
+                  View Profile
+                </button>
+                <button
+                  onClick={() => setIsEditing((prev) => !prev)}
+                  className="px-5 py-2.5 rounded-xl border border-white/30 text-white text-sm font-semibold hover:bg-white/10"
+                >
+                  {isEditing ? 'Close Edit' : 'Edit Profile'}
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsViewing(true)}
-              className="px-5 py-2 rounded-xl bg-gray-800 text-white text-sm font-medium border border-gray-700 hover:bg-gray-700"
-            >
-              View Profile
-            </button>
-            <button
-              onClick={() => setIsEditing((prev) => !prev)}
-              className="px-5 py-2 rounded-xl bg-gray-800 text-white text-sm font-medium border border-gray-700 hover:bg-gray-700"
-            >
-              {isEditing ? 'Close' : 'Edit Profile'}
-            </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8">
         <Sidebar setSection={setSection} section={section} />
-        <div>
+        <div className="space-y-6">
           {isEditing && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-              <div className="w-full max-w-3xl bg-white rounded-2xl shadow-xl">
-                <div className="flex items-center justify-between px-6 py-4 border-b">
-                  <h2 className="text-lg font-semibold text-gray-900">Edit Profile</h2>
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4">
+              <div className="w-full max-w-3xl bg-white rounded-3xl shadow-xl">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+                  <h2 className="text-lg font-semibold text-slate-900">Edit Profile</h2>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="text-gray-400 hover:text-gray-700"
+                    className="text-slate-400 hover:text-slate-700"
                     aria-label="Close"
                   >
                     ×
                   </button>
                 </div>
 
-                <div className="px-6 py-5">
-                  <div className="flex items-center gap-4 mb-5">
-                    <div className="w-16 h-16 rounded-full border bg-gray-50 overflow-hidden flex items-center justify-center text-gray-500">
+                <div className="px-6 py-6">
+                  <div className="flex flex-wrap items-center gap-4 mb-6">
+                    <div className="w-16 h-16 rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center text-slate-500">
                       {avatarUrl ? (
                         <img
                           src={resolveAvatarUrl(avatarUrl)}
@@ -163,8 +224,8 @@ const ProfilePage = ({ user, onUserUpdate }) => {
                       )}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">Profile Photo</p>
-                      <label className="inline-flex items-center gap-2 mt-2 px-3 py-2 text-sm font-medium border rounded-lg cursor-pointer hover:bg-gray-50">
+                      <p className="text-sm font-semibold text-slate-900">Profile Photo</p>
+                      <label className="inline-flex items-center gap-2 mt-2 px-3 py-2 text-sm font-medium border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
                         <input
                           type="file"
                           accept="image/*"
@@ -173,35 +234,35 @@ const ProfilePage = ({ user, onUserUpdate }) => {
                         />
                         {isUploading ? 'Uploading...' : 'Choose Photo'}
                       </label>
-                      <p className="text-xs text-gray-500 mt-1">Updates immediately after selection.</p>
+                      <p className="text-xs text-slate-500 mt-1">Updates immediately after selection.</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <label className="block text-gray-600 mb-1">Name</label>
+                      <label className="block text-slate-600 mb-1">Name</label>
                       <input
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2"
                         placeholder="Your name"
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-600 mb-1">Phone</label>
+                      <label className="block text-slate-600 mb-1">Phone</label>
                       <input
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2"
                         placeholder="Phone number"
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-gray-600 mb-1">Email</label>
+                      <label className="block text-slate-600 mb-1">Email</label>
                       <input
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2"
                         placeholder="Your email"
                       />
                     </div>
@@ -211,13 +272,13 @@ const ProfilePage = ({ user, onUserUpdate }) => {
                 <div className="px-6 pb-6 flex justify-end gap-3">
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="px-4 py-2 rounded-lg border text-sm font-medium"
+                    className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
-                    className="px-5 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800"
+                    className="px-5 py-2 rounded-xl bg-slate-900 text-white text-sm font-medium hover:bg-slate-800"
                   >
                     Save Changes
                   </button>
@@ -226,13 +287,13 @@ const ProfilePage = ({ user, onUserUpdate }) => {
             </div>
           )}
           {isViewing && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-              <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl">
-                <div className="flex items-center justify-between px-6 py-4 border-b">
-                  <h2 className="text-lg font-semibold text-gray-900">Profile Details</h2>
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4">
+              <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+                  <h2 className="text-lg font-semibold text-slate-900">Profile Details</h2>
                   <button
                     onClick={() => setIsViewing(false)}
-                    className="text-gray-400 hover:text-gray-700"
+                    className="text-slate-400 hover:text-slate-700"
                     aria-label="Close"
                   >
                     ×
@@ -240,7 +301,7 @@ const ProfilePage = ({ user, onUserUpdate }) => {
                 </div>
 
                 <div className="px-6 py-6 flex flex-col items-center text-center">
-                  <div className="w-24 h-24 rounded-full border bg-gray-50 overflow-hidden flex items-center justify-center text-gray-500 text-2xl font-semibold">
+                  <div className="w-24 h-24 rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center text-slate-500 text-2xl font-semibold">
                     {avatarUrl ? (
                       <img
                         src={resolveAvatarUrl(avatarUrl)}
@@ -251,15 +312,15 @@ const ProfilePage = ({ user, onUserUpdate }) => {
                       avatarLetter
                     )}
                   </div>
-                  <h3 className="mt-4 text-lg font-semibold text-gray-900">{userName}</h3>
-                  {userPhone && <p className="text-sm text-gray-600 mt-1">{userPhone}</p>}
-                  <p className="text-sm text-gray-600 mt-1">{userEmail}</p>
-                  {joinedDate && <p className="text-xs text-gray-500 mt-2">Joined {joinedDate}</p>}
+                  <h3 className="mt-4 text-lg font-semibold text-slate-900">{userName}</h3>
+                  {userPhone && <p className="text-sm text-slate-600 mt-1">{userPhone}</p>}
+                  <p className="text-sm text-slate-600 mt-1">{userEmail}</p>
+                  {joinedDate && <p className="text-xs text-slate-500 mt-2">Joined {joinedDate}</p>}
                 </div>
 
                 <div className="px-6 pb-6">
-                  <div className="rounded-xl border border-gray-200 p-4 text-sm text-gray-700">
-                    <p className="text-xs font-semibold text-gray-500">Saved Address</p>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                    <p className="text-xs font-semibold text-slate-500">Saved Address</p>
                     <p className="mt-2">{userAddress || 'No address saved yet.'}</p>
                   </div>
                 </div>

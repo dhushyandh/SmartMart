@@ -93,6 +93,8 @@ const BookDetails = () => {
   const semester = book.semester || 'N/A'
   const publisher = book.publisher || 'N/A'
   const imageList = book.images?.length ? book.images : [{ url: assets.hero_img }]
+  const stockCount = typeof book.stock === 'number' ? book.stock : 0
+  const isOutOfStock = stockCount <= 0
   const reviews = book.reviews || []
 
   const handleSubmitReview = async () => {
@@ -162,7 +164,14 @@ const BookDetails = () => {
           </div>
           <p className='mt-2 text-gray-600'>Author: {author}</p>
           <p className='text-gray-600'>Department: {department}</p>
-          <p className='mt-5 text-3xl font-medium'>{currency}{book.price}</p>
+          <div className='mt-5 flex flex-wrap items-center gap-3'>
+            <p className='text-3xl font-medium'>{currency}{book.price}</p>
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold ${isOutOfStock ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
+            >
+              {isOutOfStock ? 'Out of stock' : 'In stock'}
+            </span>
+          </div>
           <p className='mt-5 text-gray-500 md:w-4/5'> {book.description}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8 text-sm text-gray-700">
             <div className="border rounded p-3 bg-gray-50">

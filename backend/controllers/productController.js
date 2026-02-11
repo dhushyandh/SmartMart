@@ -17,7 +17,8 @@ const addProduct = async (req, res) => {
             author,
             edition,
             semester,
-            publisher
+            publisher,
+            stock
         } = req.body;
         
 
@@ -50,6 +51,7 @@ const addProduct = async (req, res) => {
             sizes: JSON.parse(sizes),
             images: imagesUrl,
             date: Date.now(),
+            stock: typeof stock !== 'undefined' ? Math.max(0, Number(stock) || 0) : 0,
         }
         console.log(productData);
 
@@ -94,7 +96,7 @@ const singleProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        const { id, name, description, price, category, subCategory, department, author, edition, semester, publisher, bestseller } = req.body;
+        const { id, name, description, price, category, subCategory, department, author, edition, semester, publisher, bestseller, stock } = req.body;
         const updateData = {};
 
         if (typeof name !== 'undefined') updateData.name = name;
@@ -108,6 +110,7 @@ const updateProduct = async (req, res) => {
         if (typeof semester !== 'undefined') updateData.semester = semester;
         if (typeof publisher !== 'undefined') updateData.publisher = publisher;
         if (typeof bestseller !== 'undefined') updateData.bestseller = bestseller === 'true' || bestseller === true;
+        if (typeof stock !== 'undefined') updateData.stock = Math.max(0, Number(stock) || 0);
 
         const image1 = req.files?.image1 && req.files.image1[0];
         const image2 = req.files?.image2 && req.files.image2[0];

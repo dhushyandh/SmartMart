@@ -53,57 +53,70 @@ const StudentVerification = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">Student Verification</h2>
-
-      <h4 className="mt-4 text-base font-semibold text-gray-900">
-        Capture the <span className="text-blue-600">Back Side</span> of Your Student ID
-      </h4>
-
-      <p className="mt-2 text-sm text-gray-600">
-        Take a live photo of the back side of your valid college ID card
-        where your Roll Number and Duration are printed.
-      </p>
-
-      <div className="mt-4 border border-blue-200 bg-blue-50 text-blue-700 rounded-xl p-4 text-sm">
-        <p className="font-semibold mb-2">Important Instructions:</p>
-        <ul className="list-disc pl-5 space-y-1">
-          <li>Ensure Roll Number and Duration are clearly visible</li>
-          <li>Remove the ID from any cover or sleeve</li>
-          <li>Use good lighting and keep the camera steady</li>
-        </ul>
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Verification</p>
+          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Student ID Check</h2>
+        </div>
+        <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">
+          Live capture only
+        </span>
       </div>
 
-      <div className="mt-6 border-2 border-dashed border-gray-300 rounded-2xl h-48 flex flex-col items-center justify-center text-gray-600 relative overflow-hidden">
-        {preview ? (
-          <img src={preview} alt="Student ID" className="absolute inset-0 w-full h-full object-cover" />
-        ) : (
-          <>
-            <div className="bg-gray-100 text-gray-700 rounded-2xl w-12 h-12 flex items-center justify-center">
-              <FaCamera />
-            </div>
-            <p className="mt-3 text-sm font-semibold text-gray-800">Capture Photo</p>
-            <small className="text-xs text-gray-500">Direct Camera Only</small>
-          </>
-        )}
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={handleFileChange}
-          className="absolute inset-0 opacity-0 cursor-pointer"
-        />
-      </div>
+      <div className="mt-5 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6">
+        <div>
+          <h4 className="text-base font-semibold text-slate-900">
+            Capture the <span className="text-rose-600">back side</span> of your student ID
+          </h4>
+          <p className="mt-2 text-sm text-slate-600">
+            Make sure the Roll Number and Duration are clearly visible. Avoid glare and keep
+            the camera steady during the capture.
+          </p>
 
-      <div className="mt-4 flex items-center gap-3">
-        <button
-          onClick={handleUpload}
-          disabled={loading}
-          className="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-60"
-        >
-          {loading ? 'Uploading...' : 'Submit for Verification'}
-        </button>
-        {status && <p className="text-sm text-gray-600">{status}</p>}
+          <div className="mt-4 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm text-rose-700">
+            <p className="font-semibold mb-2">Quick checklist</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Remove any cover or sleeve</li>
+              <li>Use even lighting, no shadows</li>
+              <li>Keep the card fully within the frame</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div className="border-2 border-dashed border-slate-300 rounded-3xl h-56 flex flex-col items-center justify-center text-slate-600 relative overflow-hidden bg-slate-50">
+            {preview ? (
+              <img src={preview} alt="Student ID" className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <>
+                <div className="bg-white text-slate-700 rounded-2xl w-12 h-12 flex items-center justify-center shadow-sm">
+                  <FaCamera />
+                </div>
+                <p className="mt-3 text-sm font-semibold text-slate-800">Capture Photo</p>
+                <small className="text-xs text-slate-500">Rear camera recommended</small>
+              </>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileChange}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+            />
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button
+              onClick={handleUpload}
+              disabled={loading}
+              className="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 disabled:opacity-60"
+            >
+              {loading ? 'Uploading...' : 'Submit for Verification'}
+            </button>
+            {status && <p className="text-sm text-slate-600">{status}</p>}
+          </div>
+        </div>
       </div>
     </div>
   )
