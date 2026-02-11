@@ -20,6 +20,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import MyProfile from './pages/MyProfile'
 import OrderSuccess from './pages/OrderSuccess'
+import NotFound from './pages/NotFound'
 
 
 
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/my-profile" element={<MyProfile />} />
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
       <Footer />

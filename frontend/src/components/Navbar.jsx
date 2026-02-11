@@ -9,7 +9,7 @@ const Navbar = () => {
   const location = useLocation();
   const [visible, setVisible] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const adminUrl = import.meta.env.adminUrl;
 
   const context = useContext(ShopContext) || {};
   const {
@@ -40,6 +40,13 @@ const Navbar = () => {
   };
 
   const handleSearchClick = () => {
+    const isMobile = window.innerWidth < 640;
+
+    if (isMobile) {
+      setShowSearch(true);
+      return;
+    }
+
     if (!searchOpen) {
       setSearchOpen(true);
       return;
@@ -60,11 +67,11 @@ const Navbar = () => {
   };
 
   return (
-    <div className="relative z-50 flex items-center justify-between py-2 font-medium">
+    <div className="relative z-50 flex items-center justify-between py-6 font-medium">
 
       <div className="flex items-center gap-8">
         <Link to="/">
-          <img src={assets.logo} className="w-36" alt="logo" />
+          <img src={assets.logo} className="w-36 h-10 object-contain" alt="logo" />
         </Link>
         {token && location.pathname !== '/login' && (
           <div className="hidden md:flex items-center gap-4 border-l pl-6">
@@ -161,14 +168,6 @@ const Navbar = () => {
                     Dashboard
                   </p>
                 )}
-                {userRole === 'admin' && (
-                  <p
-                    onClick={() => (window.location.href = adminUrl)}
-                    className="cursor-pointer hover:text-black"
-                  >
-                    Admin Panel
-                  </p>
-                )}
                 <p
                   onClick={() => navigate('/my-profile')}
                   className="cursor-pointer hover:text-black"
@@ -239,7 +238,7 @@ const Navbar = () => {
             HOME
           </NavLink>
           <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to="/collection">
-            DEPARTMENTS
+            COLLECTIONS
           </NavLink>
           <NavLink onClick={() => setVisible(false)} className="py-2 pl-6 border" to="/about">
             ABOUT
@@ -248,24 +247,22 @@ const Navbar = () => {
             CONTACT
           </NavLink>
 
+          <NavLink
+            onClick={() => setVisible(false)}
+            className="py-2 pl-6 border"
+            to="/my-profile"
+          >
+            MY PROFILE
+          </NavLink>
+
           {token && userRole === 'admin' && (
             <button
-              onClick={() => (window.location.href = VITE_BACKEND_URL)}
+              onClick={() => (window.location.href =  adminUrl)}
               className="py-2 pl-6 border text-left text-gray-800 font-semibold"
             >
               DASHBOARD
             </button>
           )}
-
-          {token && userRole === 'admin' && (
-            <button
-              onClick={() => (window.location.href = VITE_BACKEND_URL)}
-              className="py-2 pl-6 border text-left text-gray-800 font-semibold"
-            >
-              ADMIN PANEL
-            </button>
-          )}
-
           {token && (
             <button
               onClick={handleLogout}

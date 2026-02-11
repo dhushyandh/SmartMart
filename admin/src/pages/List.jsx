@@ -13,6 +13,8 @@ const List = ({ token }) => {
   const [editingItem, setEditingItem] = useState(null);
   const [stockItem, setStockItem] = useState(null);
   const [stockValue, setStockValue] = useState('');
+  const [priceFilter, setPriceFilter] = useState({ min: '', max: '' });
+  const [sortType, setSortType] = useState('relavant');
   const [imageFiles, setImageFiles] = useState([null, null, null, null]);
   const [imagePreviews, setImagePreviews] = useState(['', '', '', '']);
   const [formData, setFormData] = useState({
@@ -28,6 +30,13 @@ const List = ({ token }) => {
     publisher: '',
     bestseller: false
   });
+  const allowedDepartments = ['CSE', 'IT', 'ECE', 'EEE', 'AIDS']
+
+  const getDepartmentValue = (item) => {
+    if (allowedDepartments.includes(item?.department)) return item.department
+    if (allowedDepartments.includes(item?.category)) return item.category
+    return 'Unassigned'
+  }
 
   const fetchList = async () => {
     try {
@@ -171,9 +180,67 @@ const List = ({ token }) => {
     setImagePreviews(nextPreviews);
   }
 
+  const filteredList = () => {
+    let filtered = list.slice();
+
+    const minPrice = priceFilter.min !== '' ? Number(priceFilter.min) : null;
+    const maxPrice = priceFilter.max !== '' ? Number(priceFilter.max) : null;
+
+    if (minPrice !== null && !Number.isNaN(minPrice)) {
+      filtered = filtered.filter((item) => Number(item.price) >= minPrice);
+    }
+
+    if (maxPrice !== null && !Number.isNaN(maxPrice)) {
+      filtered = filtered.filter((item) => Number(item.price) <= maxPrice);
+    }
+
+    if (sortType === 'low-high') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortType === 'high-low') {
+      filtered.sort((a, b) => b.price - a.price);
+    }
+
+    return filtered;
+  }
+
   return (
     <>
-      <p className='mb-2'>All Books List</p>
+      <div className='flex flex-col gap-2 mb-4'>
+        <p>All Books List</p>
+        <div className='flex flex-wrap items-center gap-3 text-sm'>
+          <div className='flex items-center gap-2'>
+            <span className='text-gray-600'>Min</span>
+            <input
+              type='number'
+              min='0'
+              value={priceFilter.min}
+              onChange={(e) => setPriceFilter((prev) => ({ ...prev, min: e.target.value }))}
+              className='border px-2 py-1 rounded w-24'
+              placeholder='0'
+            />
+          </div>
+          <div className='flex items-center gap-2'>
+            <span className='text-gray-600'>Max</span>
+            <input
+              type='number'
+              min='0'
+              value={priceFilter.max}
+              onChange={(e) => setPriceFilter((prev) => ({ ...prev, max: e.target.value }))}
+              className='border px-2 py-1 rounded w-24'
+              placeholder='9999'
+            />
+          </div>
+          <select
+            value={sortType}
+            onChange={(e) => setSortType(e.target.value)}
+            className='border px-2 py-1 rounded'
+          >
+            <option value='relavant'>Sort by: Relevance</option>
+            <option value='low-high'>Sort by: Low to High</option>
+            <option value='high-low'>Sort by: High to Low</option>
+          </select>
+        </div>
+      </div>
       <div className='flex flex-col gap-2'>
         {/* List Table Title */}
         <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm '>
@@ -200,11 +267,11 @@ const List = ({ token }) => {
             </div>
           ))
         ) : (
-          list.map((item, index) => (
+          filteredList().map((item, index) => (
             <div className='grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 border text-sm' key={index}>
               <img className='w-12' src={item.images?.[0]?.url} alt="" />
               <p className=''>{item.name}</p>
-              <p>{item.department || item.category}</p>
+              <p>{getDepartmentValue(item)}</p>
               <p>{typeof item.stock === 'number' ? item.stock : 0}</p>
               <p>{currency}{item.price}</p>
               <div className='flex items-center justify-end md:justify-center gap-3 text-sm'>

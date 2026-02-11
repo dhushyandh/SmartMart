@@ -24,6 +24,14 @@ const heroSlides = [
     image: assets.hero_img_2,
     badge: "STUDENT10",
   },
+  {
+    title: "Complete Engineering Shelf",
+    subtitle: "All Departments",
+    cta: "Shop Now",
+    description: "From CS to Civil, find core textbooks for every semester and subject.",
+    image: assets.hero_img_3,
+    badge: "NEW",
+  },
 ]
 
 const Hero = () => {

@@ -55,9 +55,10 @@ import p_img51 from './p_img51.png'
 import p_img52 from './p_img52.png'
 
 
-import logo from './logo-1.png'
+import logo from './bookhub_logo.svg'
 import hero_img from './hero_img.png'
 import hero_img_2 from './corousel.png'
+import hero_img_3 from './hero_img_3.jpeg'
 import cart_icon from './cart_icon.png'
 import bin_icon from './bin_icon.png'
 import dropdown_icon from './dropdown_icon.png'
@@ -94,7 +95,8 @@ export const assets = {
     razorpay_logo,
     stripe_logo,
     cross_icon,
-    hero_img_2
+    hero_img_2,
+    hero_img_3
 }
 
 export const products = [

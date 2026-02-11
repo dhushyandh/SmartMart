@@ -203,8 +203,11 @@ const BookDetails = () => {
             </button>
           </div>
           <hr className='mt-8 sm:w-4/5' />
-          <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
-            <p>Verified academic editions.</p>
+          <div className="text-sm text-gray-500 mt-5 flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-gray-700">
+              <img src={assets.quality_icon} alt="Quality" className="w-5 h-5" />
+              <span>Verified academic editions.</span>
+            </div>
             <p>Cash on delivery is available for eligible orders.</p>
             <p>Return within 7 days for damaged copies.</p>
           </div>

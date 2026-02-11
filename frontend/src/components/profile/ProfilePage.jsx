@@ -8,6 +8,7 @@ import Settings from './Settings'
 import { ShopContext } from '../../context/ShopContext'
 import { useContext } from 'react'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const ProfilePage = ({ user, onUserUpdate }) => {
   const [section, setSection] = useState('student')
@@ -20,6 +21,7 @@ const ProfilePage = ({ user, onUserUpdate }) => {
   })
   const [avatarPreview, setAvatarPreview] = useState('')
   const [isUploading, setIsUploading] = useState(false)
+  const navigate = useNavigate()
 
   const { backendUrl, token } = useContext(ShopContext)
 
@@ -125,7 +127,11 @@ const ProfilePage = ({ user, onUserUpdate }) => {
               </div>
 
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <button
+                  type="button"
+                  onClick={() => navigate('/orders')}
+                  className="rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-slate-300 hover:bg-slate-50 transition"
+                >
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
                       <FaShoppingCart />
@@ -135,7 +141,7 @@ const ProfilePage = ({ user, onUserUpdate }) => {
                       <p className="text-sm font-semibold text-slate-900">Track history</p>
                     </div>
                   </div>
-                </div>
+                </button>
                 <div className="rounded-2xl border border-slate-200 bg-white p-4">
                   <div className="flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">

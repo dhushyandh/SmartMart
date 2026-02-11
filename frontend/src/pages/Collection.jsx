@@ -12,6 +12,16 @@ const Collection = () => {
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
   const [sortType, setSortType] = useState('relavant');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [semesterFilters, setSemesterFilters] = useState([]);
+  const [ratingFilter, setRatingFilter] = useState('');
+  const allowedDepartments = ['CSE', 'IT', 'ECE', 'EEE', 'AIDS']
+
+  const getDepartmentValue = (item) => {
+    if (allowedDepartments.includes(item?.department)) return item.department
+    if (allowedDepartments.includes(item?.category)) return item.category
+    return ''
+  }
 
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
@@ -19,6 +29,15 @@ const Collection = () => {
     }
     else {
       setCategory(prev => [...prev, e.target.value])
+    }
+  }
+
+  const toggleSemester = (e) => {
+    const value = e.target.value
+    if (semesterFilters.includes(value)) {
+      setSemesterFilters((prev) => prev.filter((item) => item !== value))
+    } else {
+      setSemesterFilters((prev) => [...prev, value])
     }
   }
   const applyFilter = () => {
@@ -34,38 +53,60 @@ const Collection = () => {
 
     if (category.length > 0) {
       productsCopy = productsCopy.filter(item =>
-        category.includes(item.department || item.category)
+        category.includes(getDepartmentValue(item))
       )
     }
 
-    setFilterProducts(productsCopy)
-  }
-
-
-  const sortProduct = () => {
-
-    let fpcopy = filterProducts.slice();
-
-    switch (sortType) {
-      case 'low-high':
-        setFilterProducts(fpcopy.sort((a, b) => (a.price - b.price)));
-        break;
-      case 'high-low':
-        setFilterProducts(fpcopy.sort((a, b) => (b.price - a.price)));
-        break;
-      default:
-        applyFilter();
-        break;
+    if (semesterFilters.length > 0) {
+      productsCopy = productsCopy.filter((item) => {
+        const itemSemester = String(item.semester || '').trim()
+        return semesterFilters.includes(itemSemester)
+      })
     }
+
+    if (ratingFilter !== '') {
+      const minimumRating = Number(ratingFilter)
+      if (!Number.isNaN(minimumRating)) {
+        productsCopy = productsCopy.filter((item) => {
+          const reviews = Array.isArray(item.reviews) ? item.reviews : []
+          if (reviews.length === 0) return false
+          const total = reviews.reduce((sum, review) => sum + (Number(review.rating) || 0), 0)
+          const average = total / reviews.length
+          return average >= minimumRating
+        })
+      }
+    }
+
+    const minPrice = priceRange.min !== '' ? Number(priceRange.min) : null
+    const maxPrice = priceRange.max !== '' ? Number(priceRange.max) : null
+
+    if (minPrice !== null && !Number.isNaN(minPrice)) {
+      productsCopy = productsCopy.filter(item => Number(item.price) >= minPrice)
+    }
+
+    if (maxPrice !== null && !Number.isNaN(maxPrice)) {
+      productsCopy = productsCopy.filter(item => Number(item.price) <= maxPrice)
+    }
+
+    const sorted = productsCopy.slice()
+    if (sortType === 'low-high') {
+      sorted.sort((a, b) => a.price - b.price)
+    } else if (sortType === 'high-low') {
+      sorted.sort((a, b) => b.price - a.price)
+    }
+
+    setFilterProducts(sorted)
   }
 
   useEffect(() => {
     applyFilter()
-  }, [products, category, search])
+  }, [products, category, semesterFilters, ratingFilter, search, priceRange, sortType])
 
   useEffect(() => {
-    sortProduct()
-  }, [sortType])
+    if (category.length === 0) {
+      setSemesterFilters([])
+    }
+  }, [category])
 
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>
@@ -94,6 +135,71 @@ const Collection = () => {
             </p>
           </div>
         </div>
+        <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
+          <p className='mb-3 text-sm font-medium'>PRICE RANGE</p>
+          <div className='flex flex-col gap-3 text-sm text-gray-700 pr-5'>
+            <input
+              type='number'
+              min='0'
+              placeholder='Min price'
+              value={priceRange.min}
+              onChange={(e) => setPriceRange((prev) => ({ ...prev, min: e.target.value }))}
+              className='border border-gray-300 px-2 py-1 rounded'
+            />
+            <input
+              type='number'
+              min='0'
+              placeholder='Max price'
+              value={priceRange.max}
+              onChange={(e) => setPriceRange((prev) => ({ ...prev, max: e.target.value }))}
+              className='border border-gray-300 px-2 py-1 rounded'
+            />
+          </div>
+        </div>
+        <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
+          <p className='mb-3 text-sm font-medium'>RATING</p>
+          <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
+            {['4', '3', '2', '1'].map((value) => (
+              <label key={value} className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='radio'
+                  name='rating-filter'
+                  className='w-3'
+                  value={value}
+                  checked={ratingFilter === value}
+                  onChange={(e) => setRatingFilter(e.target.value)}
+                />
+                {value}+ stars
+              </label>
+            ))}
+            <button
+              type='button'
+              onClick={() => setRatingFilter('')}
+              className='text-xs text-gray-500 hover:text-gray-700 w-fit'
+            >
+              Clear rating filter
+            </button>
+          </div>
+        </div>
+        {category.length > 0 && (
+          <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
+            <p className='mb-3 text-sm font-medium'>SEMESTER</p>
+            <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
+              {['1', '2', '3', '4', '5', '6', '7'].map((value) => (
+                <p key={value} className='flex gap-2'>
+                  <input
+                    type='checkbox'
+                    className='w-3'
+                    value={value}
+                    onChange={toggleSemester}
+                    checked={semesterFilters.includes(value)}
+                  />
+                  Semester {value}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       {/* Right-Side */}
       <div className='flex-1'>
