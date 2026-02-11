@@ -96,6 +96,7 @@ const BookDetails = () => {
   const stockCount = typeof book.stock === 'number' ? book.stock : 0
   const isOutOfStock = stockCount <= 0
   const reviews = book.reviews || []
+  const canReview = Boolean(token)
 
   const handleSubmitReview = async () => {
     if (!token) {
@@ -132,6 +133,16 @@ const BookDetails = () => {
 
   return (
     <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900"
+        >
+          <span className="text-lg">←</span>
+          Back
+        </button>
+      </div>
       <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
         {/* Book Images */}
         <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
@@ -227,13 +238,17 @@ const BookDetails = () => {
 
         <div className="border rounded-2xl p-5 mt-6">
           <h3 className="text-base font-semibold text-gray-900">Write a Review</h3>
+          {!canReview && (
+            <p className="mt-2 text-sm text-amber-600">Login To POst Review</p>
+          )}
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-4">
             <div>
               <label className="block text-sm text-gray-600 mb-1">Rating</label>
               <select
                 value={rating}
                 onChange={(e) => setRating(Number(e.target.value))}
-                className="w-full border rounded-lg px-3 py-2 text-sm"
+                disabled={!canReview}
+                className="w-full border rounded-lg px-3 py-2 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 <option value={5}>5 - Excellent</option>
                 <option value={4}>4 - Very good</option>
@@ -247,7 +262,8 @@ const BookDetails = () => {
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 text-sm min-h-[100px]"
+                disabled={!canReview}
+                className="w-full border rounded-lg px-3 py-2 text-sm min-h-[100px] disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="Share your thoughts about this book"
               />
             </div>
@@ -255,7 +271,7 @@ const BookDetails = () => {
           <div className="mt-4 flex justify-end">
             <button
               type="button"
-              disabled={submitting}
+              disabled={submitting || !canReview}
               onClick={handleSubmitReview}
               className="px-5 py-2 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-900 disabled:opacity-60"
             >

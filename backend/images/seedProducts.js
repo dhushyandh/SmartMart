@@ -99,7 +99,6 @@ const seedProducts = async () => {
         price: item.price,
         category: item.cat,
         subCategory: item.sub,
-        bestseller: item.bestseller,
         sizes: ["S", "M", "L", "XL"],
         images: uploadedImages,
         date: Date.now(),

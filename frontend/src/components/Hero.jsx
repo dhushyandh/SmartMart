@@ -80,8 +80,8 @@ const Hero = () => {
                     <div className="absolute inset-0 rounded-full bg-white/20 border border-white/30 backdrop-blur-sm" />
                     <div className="absolute inset-6 rounded-full bg-white/25 border border-white/40" />
                     <div className="absolute inset-12 rounded-full bg-white/20 border border-white/30" />
-                    <div className="absolute inset-0 flex items-center justify-center text-white text-2xl font-semibold">
-                      {slide.badge}
+                    <div className="absolute inset-0 flex items-center justify-center text-white text-2xl font-semibold text-center leading-none">
+                      <span className="block -translate-y-[1px]">{slide.badge}</span>
                     </div>
                     <img
                       src={slide.image}

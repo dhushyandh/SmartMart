@@ -188,11 +188,13 @@ const ShopContextProvider = (props) => {
         setWishlistItems((prev) => {
             const exists = prev.includes(itemId);
             const next = exists ? prev.filter((id) => id !== itemId) : [...prev, itemId];
-            toast.success(exists ? 'Removed from wishlist' : 'Added to wishlist', {
-                position: 'bottom-right',
-                pauseOnHover: false,
-                autoClose: 2000
-            });
+            if (!exists) {
+                toast.success('Added to wishlist', {
+                    position: 'bottom-right',
+                    pauseOnHover: false,
+                    autoClose: 2000
+                });
+            }
             return next;
         });
     };

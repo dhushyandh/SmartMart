@@ -6,7 +6,6 @@ import { useLocation } from 'react-router-dom';
 const Searchbar = () => {
 
     const { search, setSearch, showSearch, setShowSearch, navigate } = useContext(ShopContext);
-    const [visible, setVisible] = useState('');
     const location = useLocation();
 
     const handleSubmit = () => {
@@ -17,16 +16,7 @@ const Searchbar = () => {
         setShowSearch(false);
     };
 
-    useEffect(() => {
-        if (location.pathname.includes('collection')) {
-            setVisible(true);
-        }
-        else {
-            setVisible(false)
-        }
-    }, [location])
-
-    return showSearch && visible ? (
+    return showSearch ? (
         <div className='fixed inset-0 z-[60] sm:static'>
             <div className='absolute inset-0 bg-black/20 backdrop-blur-sm sm:hidden' />
             <div className='relative bg-white/95 backdrop-blur border-b shadow-sm sm:static sm:bg-gray-50 sm:border-t sm:border-b sm:shadow-none'>

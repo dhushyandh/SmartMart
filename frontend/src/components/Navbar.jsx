@@ -24,6 +24,9 @@ const Navbar = () => {
     getWishlistCount = () => 0,
   } = context;
 
+  const isLoginPage = location.pathname === '/login';
+  const showProfileMenu = token && !isLoginPage;
+
   const formatLocation = (label) => {
     if (!label) return { title: 'Set location', subtitle: 'Choose your address' };
     const parts = label.split(',').map((part) => part.trim());
@@ -149,6 +152,21 @@ const Navbar = () => {
           alt="search"
         />
 
+        {token && !isLoginPage && (
+          <div className="sm:hidden flex items-center gap-2 max-w-[150px]">
+            <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center">
+              <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22s7-5.3 7-12a7 7 0 10-14 0c0 6.7 7 12 7 12z" stroke="currentColor" strokeWidth="1.5" />
+                <circle cx="12" cy="10" r="2.5" fill="currentColor" />
+              </svg>
+            </div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-[11px] font-semibold text-gray-900 truncate">{title}</span>
+              {subtitle && <span className="text-[10px] text-gray-500 truncate">{subtitle}</span>}
+            </div>
+          </div>
+        )}
+
         <div className="group relative hidden sm:block">
           <img
             onClick={() => !token && navigate('/login')}
@@ -157,7 +175,7 @@ const Navbar = () => {
             alt="profile"
           />
 
-          {token && (
+          {showProfileMenu && (
             <div className="group-hover:block hidden absolute right-0 pt-4">
               <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-700 rounded">
                 {userRole === 'admin' && (
@@ -191,7 +209,7 @@ const Navbar = () => {
           )}
         </div>
 
-        <Link to="/wishlist" className="relative">
+        <Link to="/wishlist" className="relative hidden sm:inline-flex">
           <FaRegHeart className="w-5 h-5 text-gray-700" />
           {getWishlistCount() > 0 && (
             <p className="absolute -right-2 -bottom-2 w-4 h-4 flex items-center justify-center text-[10px] bg-black text-white rounded-full">
@@ -200,19 +218,13 @@ const Navbar = () => {
           )}
         </Link>
 
-        <Link to="/cart" className="relative">
+        <Link to="/cart" className="relative hidden sm:inline-flex">
           <img src={assets.cart_icon} className="w-5" alt="cart" />
           <p className="absolute -right-2 -bottom-2 w-4 h-4 flex items-center justify-center text-[10px] bg-black text-white rounded-full">
             {getCartCount()}
           </p>
         </Link>
 
-        <img
-          onClick={() => setVisible(true)}
-          src={assets.menu_icon}
-          className="w-5 cursor-pointer sm:hidden"
-          alt="menu"
-        />
       </div>
 
       <div
@@ -247,13 +259,15 @@ const Navbar = () => {
             CONTACT
           </NavLink>
 
-          <NavLink
-            onClick={() => setVisible(false)}
-            className="py-2 pl-6 border"
-            to="/my-profile"
-          >
-            MY PROFILE
-          </NavLink>
+          {showProfileMenu && (
+            <NavLink
+              onClick={() => setVisible(false)}
+              className="py-2 pl-6 border"
+              to="/my-profile"
+            >
+              MY PROFILE
+            </NavLink>
+          )}
 
           {token && userRole === 'admin' && (
             <button
@@ -263,7 +277,7 @@ const Navbar = () => {
               DASHBOARD
             </button>
           )}
-          {token && (
+          {showProfileMenu && (
             <button
               onClick={handleLogout}
               className="py-2 pl-6 border text-left text-red-600 font-semibold"

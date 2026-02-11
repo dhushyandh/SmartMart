@@ -15,6 +15,7 @@ import passwordRouter from './routes/passwordRoute.js';
 import userProfileRouter from './routes/userProfileRoute.js';
 import bookRoutes from "./routes/bookRoutes.js";
 import contactRouter from "./routes/contactRoute.js";
+import adminRouter from './routes/adminRoute.js';
 
 
 
@@ -42,6 +43,7 @@ app.use("/api/password", passwordRouter);
 app.use("/api/user", userProfileRouter);
 app.use("/api", bookRoutes);
 app.use("/api", contactRouter);
+app.use('/api/admin', adminRouter);
 
 
 app.get('/', (req, res) => {

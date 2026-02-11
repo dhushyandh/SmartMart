@@ -14,6 +14,26 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
+    rollNumber: {
+      type: String,
+      default: "",
+    },
+
+    collegeName: {
+      type: String,
+      default: "",
+    },
+
+    year: {
+      type: String,
+      default: "",
+    },
+
+    batch: {
+      type: String,
+      default: "",
+    },
+
     role: {
       type: String,
       default: "user",

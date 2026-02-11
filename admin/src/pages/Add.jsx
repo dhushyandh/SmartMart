@@ -23,7 +23,6 @@ const Add = ({ token }) => {
   const [edition, setEdition] = useState('');
   const [semester, setSemester] = useState('');
   const [publisher, setPublisher] = useState('');
-  const [bestseller, setBestseller] = useState(false);
   const [sizes] = useState(['Standard']);
 
   const submitHandler = async (e) => {
@@ -38,7 +37,6 @@ const Add = ({ token }) => {
       formData.append('stock', stock);
       formData.append('category', category);
       formData.append('subCategory', subCategory);
-      formData.append('bestseller', bestseller);
       formData.append('sizes', JSON.stringify(sizes));
       formData.append('department', department);
       formData.append('author', author);
@@ -165,10 +163,6 @@ const Add = ({ token }) => {
       <div className='w-full sm:max-w-80'>
         <p className='mb-2'>Publisher</p>
         <input onChange={(e) => setPublisher(e.target.value)} value={publisher} className='w-full px-3 py-2' type="text" placeholder='Publisher name' />
-      </div>
-      <div className='flex gap-2 mt-2'>
-        <input onChange={() => setBestseller(prev => !prev)} checked={bestseller} type="checkbox" className="" id="bestseller" />
-        <label className='cursor-pointer' htmlFor="bestseller">Add to bestseller</label>
       </div>
       <button type='submit' className='w-28 py-3 mt-4 bg-black text-white cursor-pointer'>ADD</button>
     </form>

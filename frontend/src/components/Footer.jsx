@@ -77,7 +77,7 @@ const Footer = () => {
       {showTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 bg-black text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-800 transition"
+          className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 bg-black text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-800 transition z-40"
         >
           <FaArrowUp />
         </button>

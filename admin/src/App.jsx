@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import { Routes, Route } from 'react-router-dom'
 import Add from './pages/Add'
+import Dashboard from './pages/Dashboard'
 import List from './pages/List'
 import Orders from './pages/Orders'
 import Users from './pages/Users'
@@ -18,13 +19,17 @@ export const  currency = '₹'
 const App = () => {
 
   const [token, setToken] = useState(
-    localStorage.getItem('token') && localStorage.getItem('token') !== 'undefined'
-      ? localStorage.getItem('token')
+    localStorage.getItem('adminToken') && localStorage.getItem('adminToken') !== 'undefined'
+      ? localStorage.getItem('adminToken')
       : ''
   );
 
   useEffect(() => {
-    localStorage.setItem('token', token)
+    if (token) {
+      localStorage.setItem('adminToken', token)
+    } else {
+      localStorage.removeItem('adminToken')
+    }
   }, [token])
 
   return (
@@ -39,6 +44,7 @@ const App = () => {
             <Sidebar />
             <div className='w-[70%] ml-[max(5vw,25px)] my-8 text-gray-800 text-base'>
               <Routes>
+                <Route path='/' element={<Dashboard token={token} />} />
                 <Route path='/add' element={<Add token={token} />} />
                 <Route path='/list' element={<List token={token} />} />
                 <Route path='/orders' element={<Orders token={token} />} />

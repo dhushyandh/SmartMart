@@ -27,8 +27,7 @@ const List = ({ token }) => {
     author: '',
     edition: '',
     semester: '',
-    publisher: '',
-    bestseller: false
+    publisher: ''
   });
   const allowedDepartments = ['CSE', 'IT', 'ECE', 'EEE', 'AIDS']
 
@@ -97,8 +96,7 @@ const List = ({ token }) => {
       author: item.author || '',
       edition: item.edition || '',
       semester: item.semester || '',
-      publisher: item.publisher || '',
-      bestseller: !!item.bestseller
+      publisher: item.publisher || ''
     });
   }
 
@@ -117,7 +115,6 @@ const List = ({ token }) => {
       payload.append('edition', formData.edition);
       payload.append('semester', formData.semester);
       payload.append('publisher', formData.publisher);
-      payload.append('bestseller', formData.bestseller);
 
       imageFiles.forEach((file, index) => {
         if (file) {
@@ -429,17 +426,6 @@ const List = ({ token }) => {
                   className='w-full border rounded-lg px-3 py-2 min-h-[110px]'
                   placeholder='Book description'
                 />
-              </div>
-              <div className='md:col-span-2 flex items-center gap-2'>
-                <input
-                  type='checkbox'
-                  id='edit-bestseller'
-                  checked={formData.bestseller}
-                  onChange={() => setFormData({ ...formData, bestseller: !formData.bestseller })}
-                />
-                <label htmlFor='edit-bestseller' className='text-sm text-gray-700'>
-                  Mark as bestseller
-                </label>
               </div>
             </div>
 

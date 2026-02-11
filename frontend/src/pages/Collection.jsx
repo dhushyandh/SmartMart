@@ -30,6 +30,7 @@ const Collection = () => {
     else {
       setCategory(prev => [...prev, e.target.value])
     }
+    setShowFilter(false)
   }
 
   const toggleSemester = (e) => {
@@ -39,6 +40,7 @@ const Collection = () => {
     } else {
       setSemesterFilters((prev) => [...prev, value])
     }
+    setShowFilter(false)
   }
   const applyFilter = () => {
     let productsCopy = products.slice()
@@ -111,98 +113,133 @@ const Collection = () => {
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>
       {/* Filter Options */}
-      <div className='min-w-60'>
-        <p onClick={() => setShowFilter(!showFilter)} className='my-2 text-xl flex items-center cursor-pointer'>FILTER BY DEPARTMENT</p>
-        <img src={assets.dropdown_icon} className={`h-3 sm:hidden ${showFilter ? 'rotate-90' : ''}`} alt="" />
-        {/* Categories Filter */}
-        <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
-          <p className='mb-3 text-sm font-medium'>DEPARTMENTS</p>
-          <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-            <p className='flex gap-2'>
-              <input type="checkbox" className="w-3" value={'CSE'} onChange={toggleCategory} />CSE
-            </p>
-            <p className='flex gap-2'>
-              <input type="checkbox" className="w-3" value={'IT'} onChange={toggleCategory} />IT
-            </p>
-            <p className='flex gap-2'>
-              <input type="checkbox" className="w-3" value={'ECE'} onChange={toggleCategory} />ECE
-            </p>
-            <p className='flex gap-2'>
-              <input type="checkbox" className="w-3" value={'EEE'} onChange={toggleCategory} />EEE
-            </p>
-            <p className='flex gap-2'>
-              <input type="checkbox" className="w-3" value={'AIDS'} onChange={toggleCategory} />AIDS
-            </p>
-          </div>
-        </div>
-        <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
-          <p className='mb-3 text-sm font-medium'>PRICE RANGE</p>
-          <div className='flex flex-col gap-3 text-sm text-gray-700 pr-5'>
-            <input
-              type='number'
-              min='0'
-              placeholder='Min price'
-              value={priceRange.min}
-              onChange={(e) => setPriceRange((prev) => ({ ...prev, min: e.target.value }))}
-              className='border border-gray-300 px-2 py-1 rounded'
-            />
-            <input
-              type='number'
-              min='0'
-              placeholder='Max price'
-              value={priceRange.max}
-              onChange={(e) => setPriceRange((prev) => ({ ...prev, max: e.target.value }))}
-              className='border border-gray-300 px-2 py-1 rounded'
-            />
-          </div>
-        </div>
-        <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
-          <p className='mb-3 text-sm font-medium'>RATING</p>
-          <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-            {['4', '3', '2', '1'].map((value) => (
-              <label key={value} className='flex items-center gap-2 cursor-pointer'>
-                <input
-                  type='radio'
-                  name='rating-filter'
-                  className='w-3'
-                  value={value}
-                  checked={ratingFilter === value}
-                  onChange={(e) => setRatingFilter(e.target.value)}
-                />
-                {value}+ stars
-              </label>
-            ))}
-            <button
-              type='button'
-              onClick={() => setRatingFilter('')}
-              className='text-xs text-gray-500 hover:text-gray-700 w-fit'
-            >
-              Clear rating filter
-            </button>
-          </div>
-        </div>
-        {category.length > 0 && (
-          <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
-            <p className='mb-3 text-sm font-medium'>SEMESTER</p>
+      {showFilter && (
+        <div className='min-w-60'>
+          <p onClick={() => setShowFilter(!showFilter)} className='my-2 text-xl flex items-center cursor-pointer'>FILTER BY DEPARTMENT</p>
+          <img src={assets.dropdown_icon} className={`h-3 sm:hidden ${showFilter ? 'rotate-90' : ''}`} alt="" />
+          {/* Categories Filter */}
+          <div className='border border-gray-300 pl-5 py-3 mt-6'>
+            <p className='mb-3 text-sm font-medium'>DEPARTMENTS</p>
             <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-              {['1', '2', '3', '4', '5', '6', '7'].map((value) => (
-                <p key={value} className='flex gap-2'>
-                  <input
-                    type='checkbox'
-                    className='w-3'
-                    value={value}
-                    onChange={toggleSemester}
-                    checked={semesterFilters.includes(value)}
-                  />
-                  Semester {value}
-                </p>
-              ))}
+              <p className='flex gap-2'>
+                <input type="checkbox" className="w-3" value={'CSE'} onChange={toggleCategory} />CSE
+              </p>
+              <p className='flex gap-2'>
+                <input type="checkbox" className="w-3" value={'IT'} onChange={toggleCategory} />IT
+              </p>
+              <p className='flex gap-2'>
+                <input type="checkbox" className="w-3" value={'ECE'} onChange={toggleCategory} />ECE
+              </p>
+              <p className='flex gap-2'>
+                <input type="checkbox" className="w-3" value={'EEE'} onChange={toggleCategory} />EEE
+              </p>
+              <p className='flex gap-2'>
+                <input type="checkbox" className="w-3" value={'AIDS'} onChange={toggleCategory} />AIDS
+              </p>
             </div>
           </div>
-        )}
-      </div>
+          <div className='border border-gray-300 pl-5 py-3 mt-6'>
+            <p className='mb-3 text-sm font-medium'>PRICE RANGE</p>
+            <div className='flex flex-col gap-3 text-sm text-gray-700 pr-5'>
+              <input
+                type='number'
+                min='0'
+                placeholder='Min price'
+                value={priceRange.min}
+                onChange={(e) => {
+                  setPriceRange((prev) => ({ ...prev, min: e.target.value }))
+                  setShowFilter(false)
+                }}
+                className='border border-gray-300 px-2 py-1 rounded'
+              />
+              <input
+                type='number'
+                min='0'
+                placeholder='Max price'
+                value={priceRange.max}
+                onChange={(e) => {
+                  setPriceRange((prev) => ({ ...prev, max: e.target.value }))
+                  setShowFilter(false)
+                }}
+                className='border border-gray-300 px-2 py-1 rounded'
+              />
+            </div>
+          </div>
+          <div className='border border-gray-300 pl-5 py-3 mt-6'>
+            <p className='mb-3 text-sm font-medium'>RATING</p>
+            <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
+              {['4', '3', '2', '1'].map((value) => (
+                <label key={value} className='flex items-center gap-2 cursor-pointer'>
+                  <input
+                    type='radio'
+                    name='rating-filter'
+                    className='w-3'
+                    value={value}
+                    checked={ratingFilter === value}
+                    onChange={(e) => {
+                      setRatingFilter(e.target.value)
+                      setShowFilter(false)
+                    }}
+                  />
+                  {value}+ stars
+                </label>
+              ))}
+              <button
+                type='button'
+                onClick={() => setRatingFilter('')}
+                className='text-xs text-gray-500 hover:text-gray-700 w-fit'
+              >
+                Clear rating filter
+              </button>
+            </div>
+          </div>
+          {category.length > 0 && (
+            <div className='border border-gray-300 pl-5 py-3 mt-6'>
+              <p className='mb-3 text-sm font-medium'>SEMESTER</p>
+              <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
+                {['1', '2', '3', '4', '5', '6', '7'].map((value) => (
+                  <p key={value} className='flex gap-2'>
+                    <input
+                      type='checkbox'
+                      className='w-3'
+                      value={value}
+                      onChange={toggleSemester}
+                      checked={semesterFilters.includes(value)}
+                    />
+                    Semester {value}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {/* Right-Side */}
       <div className='flex-1'>
+        {!showFilter && (
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowFilter(true)}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900"
+            >
+              <span className="text-lg">←</span>
+              Back to filters
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setCategory([])
+                setSemesterFilters([])
+                setPriceRange({ min: '', max: '' })
+                setRatingFilter('')
+              }}
+              className="text-xs font-semibold text-gray-500 hover:text-gray-800"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
         <div className='flex justify-between text-base sm:text-2xl mb-4'>
           <Title text1={'ALL'} text2={'BOOKS'} />
           {/* Product-Sort */}
@@ -213,19 +250,27 @@ const Collection = () => {
           </select>
         </div>
         {/* Map Products */}
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
-          {productsLoading
-            ? Array.from({ length: 12 }).map((_, index) => (
-                <div key={index} className="flex flex-col gap-3">
-                  <Skeleton className="w-full aspect-[3/4] rounded-xl" />
-                  <Skeleton className="h-4 w-4/5 rounded" />
-                  <Skeleton className="h-3 w-2/5 rounded" />
-                </div>
-              ))
-            : filterProducts.map((item, index) => (
-                <ProductItem key={index} name={item.name} id={item._id} price={item.price} image={item.images} />
-              ))}
-        </div>
+        {productsLoading ? (
+          <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
+            {Array.from({ length: 12 }).map((_, index) => (
+              <div key={index} className="flex flex-col gap-3">
+                <Skeleton className="w-full aspect-[3/4] rounded-xl" />
+                <Skeleton className="h-4 w-4/5 rounded" />
+                <Skeleton className="h-3 w-2/5 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : filterProducts.length === 0 ? (
+          <div className="border border-dashed border-gray-300 rounded-2xl p-10 text-center text-sm text-gray-500">
+            Nothing found{search ? ` for "${search}"` : ''}.
+          </div>
+        ) : (
+          <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
+            {filterProducts.map((item, index) => (
+              <ProductItem key={index} name={item.name} id={item._id} price={item.price} image={item.images} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

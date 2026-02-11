@@ -1,4 +1,3 @@
-import BestSeller from '../components/BestSeller'
 import Hero from '../components/Hero'
 import LatestCollection from '../components/LatestCollection'
 import NewLetterBox from '../components/NewLetterBox'
@@ -9,7 +8,6 @@ const Home = () => {
     <div>
       <Hero />
       <LatestCollection />
-      <BestSeller />
       <OurPolicy />
       <NewLetterBox />
     </div>

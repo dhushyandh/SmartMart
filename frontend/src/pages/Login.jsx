@@ -11,6 +11,29 @@ const Login = () => {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const [rollNumber, setRollNumber] = useState('')
+  const [collegeName, setCollegeName] = useState('')
+  const [year, setYear] = useState('')
+  const [batch, setBatch] = useState('')
+  const [phone, setPhone] = useState('')
+
+  const collegeKeywords = [
+    'C Abdul Hakeem College of Engineering and Technology',
+    'CAHCET'
+  ]
+
+  const normalizeCollege = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, '')
+  const isCollegeAllowed = (value) => {
+    const normalizedValue = normalizeCollege(value || '')
+    return collegeKeywords.some((keyword) => normalizedValue.includes(normalizeCollege(keyword)))
+  }
+
+  const currentYear = new Date().getFullYear()
+  const batchOptions = Array.from({ length: 6 }, (_, index) => {
+    const startYear = currentYear - 4 + index
+    const endYear = startYear + 4
+    return `${startYear}-${endYear}`
+  })
 
   // 1. Trigger Google Flow
   const googleAuth = () => {
@@ -22,7 +45,13 @@ const Login = () => {
     e.preventDefault();
     try {
       const endpoint = currState === 'Sign Up' ? '/api/user/register' : '/api/user/login';
-      const payload = currState === 'Sign Up' ? { name, email, password } : { email, password };
+      if (currState === 'Sign Up' && !isCollegeAllowed(collegeName)) {
+        toast.error('Only C. Abdul Hakeem College students can sign up.');
+        return;
+      }
+      const payload = currState === 'Sign Up'
+        ? { name, email, password, rollNumber, collegeName, year, batch, phone }
+        : { email, password };
       
       const response = await axios.post(backendUrl + endpoint, payload);
       
@@ -56,7 +85,36 @@ const Login = () => {
         </div>
 
         {currState !== 'Login' && (
-          <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-3 py-2 border border-gray-800' placeholder='Name' required />
+          <>
+            <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-3 py-2 border border-gray-800' placeholder='Name' required />
+            <input onChange={(e) => setRollNumber(e.target.value)} value={rollNumber} type="text" className='w-full px-3 py-2 border border-gray-800' placeholder='Roll Number' required />
+            <input onChange={(e) => setCollegeName(e.target.value)} value={collegeName} type="text" className='w-full px-3 py-2 border border-gray-800' placeholder='College Name' required />
+            <div className='w-full grid grid-cols-2 gap-3'>
+              <select
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className='w-full px-3 py-2 border border-gray-800 bg-white'
+                required
+              >
+                <option value="">Year</option>
+                {['1', '2', '3', '4', '5'].map((value) => (
+                  <option key={value} value={value}>{value}</option>
+                ))}
+              </select>
+              <select
+                value={batch}
+                onChange={(e) => setBatch(e.target.value)}
+                className='w-full px-3 py-2 border border-gray-800 bg-white'
+                required
+              >
+                <option value="">Batch</option>
+                {batchOptions.map((value) => (
+                  <option key={value} value={value}>{value}</option>
+                ))}
+              </select>
+            </div>
+            <input onChange={(e) => setPhone(e.target.value)} value={phone} type="tel" className='w-full px-3 py-2 border border-gray-800' placeholder='Mobile Number' required />
+          </>
         )}
 
         <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className='w-full px-3 py-2 border border-gray-800' placeholder='Email' required />

@@ -23,11 +23,16 @@ const ProfilePage = ({ user, onUserUpdate }) => {
   const [isUploading, setIsUploading] = useState(false)
   const navigate = useNavigate()
 
-  const { backendUrl, token } = useContext(ShopContext)
+  const { backendUrl, token, logout, userRole } = useContext(ShopContext)
+  const adminUrl = import.meta.env.adminUrl
 
   const userName = user?.name 
   const userEmail = user?.email 
   const userPhone = user?.phone || ''
+  const userRoll = user?.rollNumber || ''
+  const userCollege = user?.collegeName || ''
+  const userYear = user?.year || ''
+  const userBatch = user?.batch || ''
   const userAddress = user?.address || ''
   const avatarUrl = avatarPreview || user?.avatar || user?.googleImage || ''
   const avatarLetter = userName?.[0]?.toUpperCase() 
@@ -103,26 +108,55 @@ const ProfilePage = ({ user, onUserUpdate }) => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-6 items-center">
             <div className="bg-white/70 backdrop-blur-xl border border-white/70 rounded-3xl p-6 sm:p-8 shadow-[0_25px_70px_rgba(15,23,42,0.08)]">
-              <div className="flex flex-wrap items-center gap-5">
-                <div className="w-20 h-20 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl font-semibold overflow-hidden">
-                  {avatarUrl ? (
-                    <img
-                      src={resolveAvatarUrl(avatarUrl)}
-                      alt={userName}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    avatarLetter
-                  )}
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">My Profile</p>
-                  <h3 className="text-2xl sm:text-3xl font-semibold text-slate-900">{userName}</h3>
-                  <div className="mt-2 space-y-1 text-sm text-slate-600">
-                    {userPhone && <p>{userPhone}</p>}
-                    <p>{userEmail}</p>
-                    {joinedDate && <p className="text-xs text-slate-500">Joined {joinedDate}</p>}
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex items-center gap-5">
+                  <div className="w-20 h-20 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl font-semibold overflow-hidden">
+                    {avatarUrl ? (
+                      <img
+                        src={resolveAvatarUrl(avatarUrl)}
+                        alt={userName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      avatarLetter
+                    )}
                   </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">My Profile</p>
+                    <h3 className="text-2xl sm:text-3xl font-semibold text-slate-900">{userName}</h3>
+                    <div className="mt-2 space-y-1 text-sm text-slate-600">
+                      {userPhone && <p>{userPhone}</p>}
+                      <p>{userEmail}</p>
+                      {userRoll && <p>Roll No: {userRoll}</p>}
+                      {userCollege && <p>{userCollege}</p>}
+                      {(userYear || userBatch) && (
+                        <p>
+                          {userYear ? `Year ${userYear}` : ''}
+                          {userYear && userBatch ? ' · ' : ''}
+                          {userBatch ? `Batch ${userBatch}` : ''}
+                        </p>
+                      )}
+                      {joinedDate && <p className="text-xs text-slate-500">Joined {joinedDate}</p>}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {userRole === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={() => (window.location.href = adminUrl)}
+                      className="border border-slate-200 bg-white text-slate-700 rounded-2xl px-4 py-2 text-xs font-semibold hover:bg-slate-50"
+                    >
+                      Admin Dashboard
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="border border-rose-200 bg-rose-50 text-rose-600 rounded-2xl px-4 py-2 text-xs font-semibold hover:bg-rose-100"
+                  >
+                    Sign Out
+                  </button>
                 </div>
               </div>
 

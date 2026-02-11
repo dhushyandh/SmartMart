@@ -347,4 +347,18 @@ const updateStatus = async (req, res) => {
     }
 }
 
-export { placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, orderStatus, updateStatus, verifyStripe, verifyRazorpay }
+const deleteOrder = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        if (!orderId) {
+            return res.json({ success: false, message: "Order ID required" });
+        }
+
+        await orderModel.findByIdAndDelete(orderId);
+        return res.json({ success: true, message: "Order deleted" });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+}
+
+export { placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, orderStatus, updateStatus, deleteOrder, verifyStripe, verifyRazorpay }

@@ -54,6 +54,28 @@ const Orders = ({ token }) => {
     }
   }
 
+  const deleteOrder = async (orderId) => {
+    if (!orderId) return
+    if (!window.confirm('Delete this order?')) return
+
+    try {
+      const response = await axios.post(
+        backendUrl + '/api/order/delete',
+        { orderId },
+        { headers: { token } }
+      )
+      if (response.data.success) {
+        toast.success('Order deleted')
+        await fetchAllOrders()
+      } else {
+        toast.error(response.data.message)
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error('Failed to delete order')
+    }
+  }
+
   useEffect(() => {
     fetchAllOrders();
   }, [token])
@@ -109,13 +131,22 @@ const Orders = ({ token }) => {
                 <p>Date: {new Date(order.date).toLocaleDateString()}</p>
               </div>
               <p className='text-sm sm:text-[15px]'>{currency}{order.amount}</p>
-              <select onChange={(e) => updateStatus(e, order._id)} className="p-2 font-semibold " value={order.status} >
-                <option value="OrderPlaced">OrderPlaced</option>
-                <option value="Packing">Packing</option>
-                <option value="Shipping">Shipping</option>
-                <option value="Out For Delivery">Out For Delivery</option>
-                <option value="Delivered">Delivered</option>
-              </select>
+              <div className='flex flex-wrap items-center gap-2'>
+                <select onChange={(e) => updateStatus(e, order._id)} className="p-2 font-semibold" value={order.status} >
+                  <option value="OrderPlaced">OrderPlaced</option>
+                  <option value="Packing">Packing</option>
+                  <option value="Shipping">Shipping</option>
+                  <option value="Out For Delivery">Out For Delivery</option>
+                  <option value="Delivered">Delivered</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={() => deleteOrder(order._id)}
+                  className="px-3 py-2 rounded-md border text-red-600 hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))
         )}
