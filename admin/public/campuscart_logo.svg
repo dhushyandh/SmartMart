@@ -1,0 +1,27 @@
+<svg width="1200" height="240" viewBox="0 0 1200 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CAMPUSCART logo">
+  <defs>
+    <linearGradient id="text-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3A3A3A"/>
+      <stop offset="55%" stop-color="#232323"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="0" y="0" width="1200" height="240" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#0A0A0A" flood-opacity="0.55"/>
+    </filter>
+    <filter id="pink-shadow" x="0" y="0" width="1200" height="240" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#111111" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="240" fill="transparent"/>
+
+  <g filter="url(#soft-shadow)" transform="translate(0,0) scale(0.9,1)">
+    <text x="100" y="162" font-family="Montserrat, Outfit, Arial, sans-serif" font-size="136" font-weight="800" letter-spacing="4" fill="#111111" opacity="0.5">CAMPUSCART</text>
+    <text x="98" y="156" font-family="Montserrat, Outfit, Arial, sans-serif" font-size="136" font-weight="800" letter-spacing="4" fill="#4A4A4A" opacity="0.5">CAMPUSCART</text>
+    <text x="98" y="160" font-family="Montserrat, Outfit, Arial, sans-serif" font-size="136" font-weight="800" letter-spacing="4" fill="url(#text-fill)">CAMPUSCART</text>
+  </g>
+
+  <g filter="url(#pink-shadow)">
+    <circle cx="1180" cy="165" r="16" fill="#F4A3B7"/>
+    <circle cx="1176" cy="161" r="5" fill="#FFD1DE" opacity="0.8"/>
+  </g>
+</svg>

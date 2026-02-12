@@ -24,7 +24,7 @@ const ProfilePage = ({ user, onUserUpdate }) => {
   const navigate = useNavigate()
 
   const { backendUrl, token, logout, userRole } = useContext(ShopContext)
-  const adminUrl = import.meta.env.adminUrl
+  const adminUrl = import.meta.env.VITE_ADMIN_URL
 
   const userName = user?.name 
   const userEmail = user?.email 

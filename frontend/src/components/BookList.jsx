@@ -19,7 +19,7 @@ const BookList = () => {
 
   return (
     <div>
-      <h2>SmartMart – College Bookstore</h2>
+      <h2>CampusCart – College Bookstore</h2>
 
       <select onChange={(e) => setDepartment(e.target.value)}>
         <option value="">All Departments</option>

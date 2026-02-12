@@ -13,7 +13,6 @@ const Collection = () => {
   const [category, setCategory] = useState([]);
   const [sortType, setSortType] = useState('relavant');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [semesterFilters, setSemesterFilters] = useState([]);
   const [ratingFilter, setRatingFilter] = useState('');
   const allowedDepartments = ['CSE', 'IT', 'ECE', 'EEE', 'AIDS']
 
@@ -33,15 +32,6 @@ const Collection = () => {
     setShowFilter(false)
   }
 
-  const toggleSemester = (e) => {
-    const value = e.target.value
-    if (semesterFilters.includes(value)) {
-      setSemesterFilters((prev) => prev.filter((item) => item !== value))
-    } else {
-      setSemesterFilters((prev) => [...prev, value])
-    }
-    setShowFilter(false)
-  }
   const applyFilter = () => {
     let productsCopy = products.slice()
 
@@ -59,10 +49,11 @@ const Collection = () => {
       )
     }
 
-    if (semesterFilters.length > 0) {
+    if (sortType.startsWith('semester-')) {
+      const semesterValue = sortType.split('-')[1]
       productsCopy = productsCopy.filter((item) => {
         const itemSemester = String(item.semester || '').trim()
-        return semesterFilters.includes(itemSemester)
+        return itemSemester === semesterValue
       })
     }
 
@@ -102,13 +93,7 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilter()
-  }, [products, category, semesterFilters, ratingFilter, search, priceRange, sortType])
-
-  useEffect(() => {
-    if (category.length === 0) {
-      setSemesterFilters([])
-    }
-  }, [category])
+  }, [products, category, ratingFilter, search, priceRange, sortType])
 
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>
@@ -193,25 +178,6 @@ const Collection = () => {
               </button>
             </div>
           </div>
-          {category.length > 0 && (
-            <div className='border border-gray-300 pl-5 py-3 mt-6'>
-              <p className='mb-3 text-sm font-medium'>SEMESTER</p>
-              <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-                {['1', '2', '3', '4', '5', '6', '7'].map((value) => (
-                  <p key={value} className='flex gap-2'>
-                    <input
-                      type='checkbox'
-                      className='w-3'
-                      value={value}
-                      onChange={toggleSemester}
-                      checked={semesterFilters.includes(value)}
-                    />
-                    Semester {value}
-                  </p>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
       {/* Right-Side */}
@@ -230,9 +196,9 @@ const Collection = () => {
               type="button"
               onClick={() => {
                 setCategory([])
-                setSemesterFilters([])
                 setPriceRange({ min: '', max: '' })
                 setRatingFilter('')
+                setSortType('relavant')
               }}
               className="text-xs font-semibold text-gray-500 hover:text-gray-800"
             >
@@ -244,9 +210,12 @@ const Collection = () => {
           <Title text1={'ALL'} text2={'BOOKS'} />
           {/* Product-Sort */}
           <select onChange={(e) => setSortType(e.target.value)} className="border-2 border-gray-300 text-sm px-2">
-            <option value="relavant">Sort by: Relevance</option>
-            <option value="low-high">Sort by: Low to High</option>
-            <option value="high-low">Sort by: High to Low</option>
+            <option value="relavant">Select semester</option>
+            {['1', '2', '3', '4', '5', '6', '7', '8'].map((value) => (
+              <option key={value} value={`semester-${value}`}>
+                Semester {value}
+              </option>
+            ))}
           </select>
         </div>
         {/* Map Products */}

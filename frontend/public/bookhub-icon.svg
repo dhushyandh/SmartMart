@@ -1,8 +1,8 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BOOKHUB icon">
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CAMPUSCART icon">
   <rect width="512" height="512" rx="128" fill="#111827"/>
   <circle cx="256" cy="256" r="176" fill="#F59E0B"/>
   <path d="M176 200h88c22.1 0 40 17.9 40 40v72c0 22.1-17.9 40-40 40h-88c-11 0-20-9-20-20V220c0-11 9-20 20-20z" fill="#111827"/>
   <path d="M212 236h60" stroke="#F59E0B" stroke-width="10" stroke-linecap="round"/>
   <path d="M212 268h72" stroke="#F59E0B" stroke-width="10" stroke-linecap="round"/>
-  <text x="306" y="298" font-family="Outfit, sans-serif" font-size="82" font-weight="700" fill="#111827">BH</text>
+  <text x="306" y="298" font-family="Outfit, sans-serif" font-size="82" font-weight="700" fill="#111827">CC</text>
 </svg>

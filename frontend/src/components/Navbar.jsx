@@ -3,13 +3,15 @@ import { assets } from '../assets/assets';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { FaRegHeart } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [visible, setVisible] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const adminUrl = import.meta.env.adminUrl;
+  const [locating, setLocating] = useState(false);
+  const adminUrl = import.meta.env.VITE_ADMIN_URL;
 
   const context = useContext(ShopContext) || {};
   const {
@@ -18,6 +20,7 @@ const Navbar = () => {
     token = '',
     logout = () => {},
     locationLabel = '',
+    setLocationLabel = () => {},
     search = '',
     setSearch = () => {},
     userRole = 'user',
@@ -34,7 +37,46 @@ const Navbar = () => {
     return { title: parts[0], subtitle: parts.slice(1, 3).join(', ') };
   };
 
-  const { title, subtitle } = formatLocation(locationLabel);
+  const displayLocation = locating
+    ? { title: 'Locating...', subtitle: 'Fetching your location' }
+    : formatLocation(locationLabel);
+  const { title, subtitle } = displayLocation;
+
+  const handleLocationClick = () => {
+    if (locating) return;
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported on this device.', { position: 'bottom-right' });
+      return;
+    }
+
+    setLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+          );
+          if (!response.ok) {
+            throw new Error('Unable to fetch location.');
+          }
+          const data = await response.json();
+          const label = data.display_name || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+          setLocationLabel(label);
+        } catch (error) {
+          toast.error('Unable to fetch your location.', { position: 'bottom-right' });
+        } finally {
+          setLocating(false);
+        }
+      },
+      () => {
+        toast.error('Location access denied.', { position: 'bottom-right' });
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
 
   const handleLogout = () => {
     logout();
@@ -77,7 +119,12 @@ const Navbar = () => {
           <img src={assets.logo} className="w-36 h-10 object-contain" alt="logo" />
         </Link>
         {token && location.pathname !== '/login' && (
-          <div className="hidden md:flex items-center gap-4 border-l pl-6">
+          <button
+            type="button"
+            onClick={handleLocationClick}
+            className="hidden md:flex items-center gap-4 border-l pl-6 text-left"
+            aria-label="Set location"
+          >
             <div className="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22s7-5.3 7-12a7 7 0 10-14 0c0 6.7 7 12 7 12z" stroke="currentColor" strokeWidth="1.5" />
@@ -93,7 +140,7 @@ const Navbar = () => {
               </div>
               {subtitle && <span className="text-xs text-gray-500">{subtitle}</span>}
             </div>
-          </div>
+          </button>
         )}
       </div>
 
@@ -153,7 +200,12 @@ const Navbar = () => {
         />
 
         {token && !isLoginPage && (
-          <div className="sm:hidden flex items-center gap-2 max-w-[150px]">
+          <button
+            type="button"
+            onClick={handleLocationClick}
+            className="sm:hidden flex items-center gap-2 max-w-[150px] text-left"
+            aria-label="Set location"
+          >
             <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center">
               <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22s7-5.3 7-12a7 7 0 10-14 0c0 6.7 7 12 7 12z" stroke="currentColor" strokeWidth="1.5" />
@@ -164,7 +216,7 @@ const Navbar = () => {
               <span className="text-[11px] font-semibold text-gray-900 truncate">{title}</span>
               {subtitle && <span className="text-[10px] text-gray-500 truncate">{subtitle}</span>}
             </div>
-          </div>
+          </button>
         )}
 
         <div className="group relative hidden sm:block">

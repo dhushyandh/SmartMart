@@ -6,20 +6,23 @@ import "swiper/css/navigation"
 import "swiper/css/pagination"
 
 import { assets } from "../assets/assets"
+import { Link } from "react-router-dom"
 
 const heroSlides = [
   {
     title: "Department-wise Book Week",
     subtitle: "CSE, IT, ECE, EEE, AIDS",
     cta: "Browse Books",
+    ctaLink: "/collection",
     description: "Discover syllabus-aligned textbooks and reference guides with faster department filters.",
     image: assets.hero_img,
     badge: "CAMPUS25",
   },
   {
     title: "New Semester Essentials",
-    subtitle: "SmartMart Picks",
+    subtitle: "CampusCart Picks",
     cta: "Explore Collections",
+    ctaLink: "/collection",
     description: "Curated academic titles for every department in one place.",
     image: assets.hero_img_2,
     badge: "STUDENT10",
@@ -28,6 +31,7 @@ const heroSlides = [
     title: "Complete Engineering Shelf",
     subtitle: "All Departments",
     cta: "Shop Now",
+    ctaLink: "/collection",
     description: "From CS to Civil, find core textbooks for every semester and subject.",
     image: assets.hero_img_3,
     badge: "NEW",
@@ -50,7 +54,7 @@ const Hero = () => {
             <div className="relative min-h-[260px] sm:min-h-[340px] lg:min-h-[420px]">
               <img
                 src={slide.image}
-                alt="SmartMart"
+                alt="CampusCart"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
@@ -70,9 +74,12 @@ const Hero = () => {
                     {slide.description}
                   </p>
 
-                  <button className="mt-2 w-fit bg-white text-gray-900 px-6 py-2.5 rounded-full text-sm font-semibold shadow hover:bg-gray-100">
+                  <Link
+                    to={slide.ctaLink}
+                    className="mt-2 w-fit bg-white text-gray-900 px-6 py-2.5 rounded-full text-sm font-semibold shadow hover:bg-gray-100"
+                  >
                     {slide.cta}
-                  </button>
+                  </Link>
                 </div>
 
                 <div className="hidden lg:flex items-center justify-end">

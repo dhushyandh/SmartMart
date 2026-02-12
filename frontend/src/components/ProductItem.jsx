@@ -11,7 +11,7 @@ const ProductItem = ({ id, image, name, price }) => {
   const wished = isInWishlist(id)
 
   return (
-    <Link to={`/book/${id}`} className="text-gray-700 block">
+    <Link to={`/book/${id}`} className="text-gray-700 block group">
       <div className="relative w-full h-70 bg-gray-50 flex items-center justify-center overflow-hidden">
         <button
           type="button"
@@ -20,7 +20,7 @@ const ProductItem = ({ id, image, name, price }) => {
             e.stopPropagation();
             toggleWishlist(id);
           }}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center text-gray-700 hover:text-red-500"
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center text-gray-700 hover:text-red-500"
           aria-label="Toggle wishlist"
         >
           {wished ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
@@ -28,7 +28,7 @@ const ProductItem = ({ id, image, name, price }) => {
         <img
           src={coverImage}
           alt={name}
-          className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 pointer-events-none"
         />
       </div>
 
